@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="15" height="15" tilewidth="32" tileheight="32" nextobjectid="1">
+ <tileset firstgid="1" name="grass" tilewidth="32" tileheight="32" tilecount="16">
+  <image source="grass.png" width="128" height="128"/>
+ </tileset>
+ <tileset firstgid="17" name="dungeontiles" tilewidth="32" tileheight="32" tilecount="90">
+  <image source="dungeontiles.gif" trans="ff00ff" width="288" height="320"/>
+  <tile id="0">
+   <properties>
+    <property name="blocked" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1">
+   <properties>
+    <property name="blocked" value="true"/>
+   </properties>
+  </tile>
+  <tile id="2">
+   <properties>
+    <property name="blocked" value="true"/>
+   </properties>
+  </tile>
+  <tile id="3">
+   <properties>
+    <property name="blocked" value="true"/>
+   </properties>
+  </tile>
+  <tile id="4">
+   <properties>
+    <property name="blocked" value="true"/>
+   </properties>
+  </tile>
+  <tile id="5">
+   <properties>
+    <property name="blocked" value="true"/>
+   </properties>
+  </tile>
+  <tile id="6">
+   <properties>
+    <property name="blocked" value="true"/>
+   </properties>
+  </tile>
+  <tile id="7">
+   <properties>
+    <property name="blocked" value="true"/>
+   </properties>
+  </tile>
+  <tile id="8">
+   <properties>
+    <property name="blocked" value="true"/>
+   </properties>
+  </tile>
+  <tile id="36">
+   <properties>
+    <property name="blocked" value="true"/>
+   </properties>
+  </tile>
+  <tile id="37">
+   <properties>
+    <property name="blocked" value="true"/>
+   </properties>
+  </tile>
+  <tile id="38">
+   <properties>
+    <property name="blocked" value="true"/>
+   </properties>
+  </tile>
+  <tile id="39">
+   <properties>
+    <property name="blocked" value="true"/>
+   </properties>
+  </tile>
+  <tile id="40">
+   <properties>
+    <property name="blocked" value="true"/>
+   </properties>
+  </tile>
+  <tile id="41">
+   <properties>
+    <property name="blocked" value="true"/>
+   </properties>
+  </tile>
+  <tile id="42">
+   <properties>
+    <property name="blocked" value="true"/>
+   </properties>
+  </tile>
+  <tile id="43">
+   <properties>
+    <property name="blocked" value="true"/>
+   </properties>
+  </tile>
+  <tile id="44">
+   <properties>
+    <property name="blocked" value="true"/>
+   </properties>
+  </tile>
+ </tileset>
+ <tileset firstgid="107" name="objectStarts" tilewidth="32" tileheight="32" tilecount="16">
+  <image source="objectStarts.png" width="128" height="128"/>
+  <tile id="0">
+   <properties>
+    <property name="objectStart" value="player"/>
+   </properties>
+  </tile>
+  <tile id="1">
+   <properties>
+    <property name="objectStart" value="enemy"/>
+   </properties>
+  </tile>
+  <tile id="2">
+   <properties>
+    <property name="objectStart" value=""/>
+   </properties>
+  </tile>
+  <tile id="3">
+   <properties>
+    <property name="objectStart" value=""/>
+   </properties>
+  </tile>
+  <tile id="4">
+   <properties>
+    <property name="objectStart" value="bomb"/>
+   </properties>
+  </tile>
+  <tile id="5">
+   <properties>
+    <property name="objectStart" value="coin"/>
+   </properties>
+  </tile>
+  <tile id="8">
+   <properties>
+    <property name="portal" value="WEST,14,7"/>
+   </properties>
+  </tile>
+  <tile id="9">
+   <properties>
+    <property name="portal" value="EAST,0,7"/>
+   </properties>
+  </tile>
+  <tile id="10">
+   <properties>
+    <property name="portal" value=""/>
+   </properties>
+  </tile>
+  <tile id="11">
+   <properties>
+    <property name="portal" value=""/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer name="hiddenLayer" width="15" height="15">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAC2NgoAzkA3EBFswApXPQxPOR9BYwYIICIuRgbFIxsXbhcwM2NbjYhPTisgtdbzEDbj9l45ErodBebHop8S8p4UxJ/FKSrtDTcw4Dpn9xpWdyAQAD6h9ohAMAAA==
+  </data>
+ </layer>
+ <layer name="lowerLayer" width="15" height="15">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAC6VSWw7DIAxjhaw82sIVdgjuf7VRyZaiLPvZPiwgEMcOmSGE+Qf6wljICzvwxF1E/FooOHeVuzl8EWvDWp077gV893oiJ+FcoOXWdiw8nFrUWUycb62+BC8TvqhzKE2X4W7KC3E6+92pT7zQhwq/TfW6g0OgQ+A3I0/zHE4vh4qJeV/VfVIczNV/zdxm/kl76yYuX+Ksx3kR7DeAvUjQU4w3j49z5M2Bfs95zeBv6q87anHWY/icnV/wBoW2UZiEAwAA
+  </data>
+ </layer>
+ <layer name="upperLayer" width="15" height="15">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAC2NgGNzAdKAdMApGAY0BAHePHxaEAwAA
+  </data>
+ </layer>
+</map>
