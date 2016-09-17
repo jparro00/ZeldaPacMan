@@ -1,0 +1,1 @@
+java -Djava.library.path=lib\natives\natives-windows\ -jar lib/main.jar

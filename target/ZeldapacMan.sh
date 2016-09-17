@@ -1,0 +1,1 @@
+java -Djava.library.path=lib/natives/natives-linux/ -jar ./lib/main.jar
