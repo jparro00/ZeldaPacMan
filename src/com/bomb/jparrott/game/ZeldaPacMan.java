@@ -14,6 +14,7 @@ import org.newdawn.slick.SlickException;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.IllegalFormatCodePointException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -33,7 +34,7 @@ public class ZeldaPacMan extends BasicGame
 
     private static AppGameContainer app;
 
-    private GameContext gameContext;
+    private volatile GameContext gameContext;
     private List<GameMap> maps;
     private Iterator<GameMap> mapIterator;
     private GameMap currentMap;
@@ -67,7 +68,7 @@ public class ZeldaPacMan extends BasicGame
     }
 
     @Override
-    public void init(GameContainer container) throws SlickException {
+    public void init(GameContainer container) throws SlickException{
         this.maps = new ArrayList<GameMap>();
 
         this.maps.add(new GameMap("data/maps/Level_01.tmx"));
@@ -78,7 +79,7 @@ public class ZeldaPacMan extends BasicGame
         this.mapIterator = maps.iterator();
         this.currentMap = mapIterator.next();
 
-        this.gameContext = new GameContext(app, currentMap);
+        gameContext = GameContext.initGameContext(app, currentMap);
 
         this.musicOn = true;
         this.soundOn = true;
@@ -97,7 +98,7 @@ public class ZeldaPacMan extends BasicGame
         if(playerLives <= 0){
             mapIterator = maps.iterator();
             currentMap = mapIterator.next();
-            gameContext = new GameContext(container, currentMap);
+            gameContext = GameContext.initGameContext(container, currentMap);
         }
 
         //debug next level
@@ -113,7 +114,7 @@ public class ZeldaPacMan extends BasicGame
             if(mapIterator.hasNext()){
                 playerLives = gameContext.getPlayer().getLives();
                 currentMap = mapIterator.next();
-                gameContext = new GameContext(container, currentMap);
+                gameContext = GameContext.initGameContext(container, currentMap);
                 gameContext.getPlayer().setLives(playerLives);
                 gameContext.refreshHeartContainers();
                 return;

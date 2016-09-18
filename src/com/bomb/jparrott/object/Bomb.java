@@ -27,8 +27,8 @@ public class Bomb extends GameObject implements Animatable{
     private Explosion explosion;
     private Map<String, Animation> animationMap;
 
-    public Bomb(GameContext gameContext, float x, float y) throws SlickException{
-        this(gameContext, x, y, 10);
+    public Bomb(float x, float y) throws SlickException{
+        this(x, y, 10);
 
     }
 
@@ -41,8 +41,8 @@ public class Bomb extends GameObject implements Animatable{
      * @param fuse
      * @throws SlickException
      */
-    public Bomb(GameContext gameContext, float x, float y, int fuse) throws SlickException{
-        super(gameContext, x, y, 32, 32);
+    public Bomb(float x, float y, int fuse) throws SlickException{
+        super(x, y, 32, 32);
 
         SpriteSheet bombSpriteSheet = new SpriteSheet("data/images/bomb.png", 32, 32);
 

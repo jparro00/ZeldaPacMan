@@ -6,6 +6,7 @@ import com.bomb.jparrott.map.GameMap;
 import com.bomb.jparrott.map.Tile;
 import org.dyn4j.geometry.AABB;
 import org.newdawn.slick.Color;
+import org.newdawn.slick.Game;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.util.pathfinding.AStarPathFinder;
 import org.newdawn.slick.util.pathfinding.Path;
@@ -45,8 +46,8 @@ public class Enemy extends Character implements Hazard, Blockable {
      * @param speed
      * @throws SlickException
      */
-    public Enemy(GameContext gameContext, PathFinder pathFinder, int xBlock, int yBlock, int width, int height, float speed) throws SlickException {
-        super(gameContext, xBlock, yBlock, width, height, speed);
+    public Enemy(PathFinder pathFinder, int xBlock, int yBlock, int width, int height, float speed) throws SlickException {
+        super(xBlock, yBlock, width, height, speed);
         GameMap gameMap = gameContext.getMap();
         this.pathFinder = pathFinder;
         defaultMovement = Movement.RANDOM;
@@ -58,12 +59,12 @@ public class Enemy extends Character implements Hazard, Blockable {
      * @param gameContext
      * @throws SlickException
      */
-    public Enemy(GameContext gameContext, int xBlock, int yBlock) throws SlickException {
-        this(gameContext, new AStarPathFinder(gameContext.getMap(), 8, false), xBlock, yBlock, 30, 30, 0.1f);
+    public Enemy(int xBlock, int yBlock) throws SlickException {
+        this(new AStarPathFinder(GameContext.getInstance().getMap(), 8, false), xBlock, yBlock, 30, 30, 0.1f);
     }
 
-    public Enemy(GameContext gameContext, int xBlock, int yBlock, Movement defaultMovement) throws SlickException {
-        this(gameContext, xBlock, yBlock);
+    public Enemy(int xBlock, int yBlock, Movement defaultMovement) throws SlickException {
+        this(xBlock, yBlock);
         this.setDefaultMovement(defaultMovement);
     }
 

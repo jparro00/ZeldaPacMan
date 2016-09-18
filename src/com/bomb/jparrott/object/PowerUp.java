@@ -13,8 +13,8 @@ public abstract class PowerUp extends GameObject{
     private final static int DEFAULT_RENDERABLE_LAYER = 0;
     protected Animation sprite;
 
-    protected PowerUp(GameContext gameContext, int xBlock, int yBlock) throws SlickException{
-        super(gameContext, 0, 0, 32, 32);
+    protected PowerUp(int xBlock, int yBlock) throws SlickException{
+        super(0, 0, 32, 32);
         this.setXBlock(xBlock);
         this.setYBlock(yBlock);
         setRenderableLayer(DEFAULT_RENDERABLE_LAYER);

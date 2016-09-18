@@ -44,8 +44,8 @@ public class Player extends Character{
      * @param killZoneWidth
      * @param killZoneHeight
      */
-    public Player(GameContext gameContext, int xBlock, int yBlock, int width, int height, float speed, int killZoneWidth, int killZoneHeight) throws SlickException{
-        super(gameContext, xBlock, yBlock, width, height, speed, killZoneWidth, killZoneHeight);
+    public Player(int xBlock, int yBlock, int width, int height, float speed, int killZoneWidth, int killZoneHeight) throws SlickException{
+        super(xBlock, yBlock, width, height, speed, killZoneWidth, killZoneHeight);
         this.renderableLayer = DEFAULT_RENDERABLE_LAYER;
         this.bombCount = DEFAULT_BOMB_COUNT;
         lives = DEFAULT_LIVES_COUNT;
@@ -61,8 +61,8 @@ public class Player extends Character{
      * @param height
      * @param speed
      */
-    public Player(GameContext gameContext, int xBlock, int yBlock, int width, int height, float speed) throws SlickException{
-        this(gameContext, xBlock, yBlock, width, height, speed, width, height);
+    public Player(int xBlock, int yBlock, int width, int height, float speed) throws SlickException{
+        this(xBlock, yBlock, width, height, speed, width, height);
     }
 
     /**
@@ -70,8 +70,8 @@ public class Player extends Character{
      *
      * @param gameContext
      */
-    public Player(GameContext gameContext, int xBlock, int yBlock) throws SlickException{
-        this(gameContext, xBlock, yBlock, 24, 24, 0.15f, 24, 24);
+    public Player(int xBlock, int yBlock) throws SlickException{
+        this(xBlock, yBlock, 24, 24, 0.15f, 24, 24);
     }
 
     /**
@@ -81,7 +81,7 @@ public class Player extends Character{
         if(bombCount > 0){
             Bomb bomb;
             try{
-                bomb = new Bomb(gameContext, x, y);
+                bomb = new Bomb(x, y);
                 gameContext.add(bomb);
                 bombCount--;
             }catch (SlickException se){

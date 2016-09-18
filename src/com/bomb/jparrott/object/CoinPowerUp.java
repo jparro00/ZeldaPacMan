@@ -17,8 +17,8 @@ public class CoinPowerUp extends PowerUp implements Animatable {
 
     private Map<String, Animation> animationMap;
 
-    public CoinPowerUp(GameContext gameContext, int xBlock, int yBlock) throws SlickException {
-        super(gameContext, xBlock, yBlock);
+    public CoinPowerUp(int xBlock, int yBlock) throws SlickException {
+        super(xBlock, yBlock);
         this.animationMap = AnimationFactory.getAnimationMap(this);
         this.sprite = animationMap.get(AnimationFactory.DEFAULT);
         setWidth(16);

@@ -37,6 +37,8 @@ import java.util.Set;
  */
 public class GameContext {
 
+    private static GameContext instance = null;
+
     private GameContainer container;
     private GameMap map;
 
@@ -50,10 +52,17 @@ public class GameContext {
     private Player player;
     private Image fog;
 
-    public GameContext(GameContainer container, GameMap map) throws SlickException{
+    private GameContext(GameContainer container, GameMap map) throws SlickException{
+
+        /*
+         * not sure if this is the right way to do this... I was getting an NPE
+         * when I called getInstance in some of the objects below that I am creating
+         * so I just initialize instance with this
+         */
+        this.instance = this;
+
         this.map = map;
         this.container = container;
-
         this.gameObjects = new HashSet<GameObject>();
         this.blockables = new HashSet<Blockable>();
         this.renderables = new HashSet<Renderable>();
@@ -71,25 +80,38 @@ public class GameContext {
                     blockables.add(tile);
                 }
                 if("coin".equals(tileAttributes.get("objectStart"))){
-                    this.add(new CoinPowerUp(this, xAxis, yAxis));
+                    this.add(new CoinPowerUp(xAxis, yAxis));
                 }
                 if("bomb".equals(tileAttributes.get("objectStart"))){
-                    this.add(new BombPowerUp(this, xAxis, yAxis));
+                    this.add(new BombPowerUp(xAxis, yAxis));
                 }
                 if("player".equals(tileAttributes.get("objectStart"))){
-                    this.add(new Player(this, xAxis, yAxis));
+                    this.add(new Player(xAxis, yAxis));
                 }
                 if("enemy".equals(tileAttributes.get("objectStart"))){
-                    this.add(new Enemy(this, xAxis, yAxis, Movement.FOLLOW));
+                    this.add(new Enemy(xAxis, yAxis, Movement.FOLLOW));
                 }
             }
         }
 
         //add the heart containers for each of player lives
         for(int i = 0; i < player.getLives(); i++){
-            add(new HeartContainer(this, i, 0));
+            add(new HeartContainer(i, 0));
         }
 
+    }
+
+    public static GameContext getInstance() {
+        if(instance == null){
+            System.out.println("GameContext is being accessed and has not been initialized.  GameContext == " + instance);
+        }
+
+        return instance;
+    }
+
+    public static GameContext initGameContext(GameContainer gameContainer, GameMap map) throws SlickException {
+        instance = new GameContext(gameContainer, map);
+        return instance;
     }
 
     public void update(int delta){
@@ -306,11 +328,11 @@ public class GameContext {
         newGameContext.setPlayer(player);
 
         //TODO: clean this purge method up. the object parameter is just a bandaid
-        newGameContext.purge(new HeartContainer(this, 0, 0));
+        newGameContext.purge(new HeartContainer(0, 0));
 
         //add the heart containers for each of player lives
         for(int i = 0; i < this.player.getLives(); i++){
-            newGameContext.add(new HeartContainer(this, i, 0));
+            newGameContext.add(new HeartContainer(i, 0));
         }
 
         return newGameContext;
@@ -318,6 +340,7 @@ public class GameContext {
 
     public GameContext restart() throws SlickException {
         GameContext newGameContext = new GameContext(container, map);
+        initGameContext(container, map);
         Set<PowerUp> remainingPowerUps = powerUps;
         Set<PowerUp> powerUps = newGameContext.getPowerUps();
 
@@ -328,15 +351,14 @@ public class GameContext {
         newGameContext.addAll(remainingPowerUps);
 
         this.player.revive();
-        this.player.setGameContext(newGameContext);
         newGameContext.setPlayer(this.player);
 
         //TODO: clean this purge method up. the object parameter is just a bandaid
-        newGameContext.purge(new HeartContainer(this, 0, 0));
+        newGameContext.purge(new HeartContainer(0, 0));
 
         //add the heart containers for each of player lives
         for(int i = 0; i < this.player.getLives(); i++){
-            newGameContext.add(new HeartContainer(this, i, 0));
+            newGameContext.add(new HeartContainer(i, 0));
         }
 
         return newGameContext;
@@ -344,11 +366,11 @@ public class GameContext {
 
     public void refreshHeartContainers() throws SlickException{
         //TODO: clean this purge method up. the object parameter is just a bandaid
-        purge(new HeartContainer(this, 0, 0));
+        purge(new HeartContainer(0, 0));
 
         //add the heart containers for each of player lives
         for(int i = 0; i < this.player.getLives(); i++){
-            add(new HeartContainer(this, i, 0));
+            add(new HeartContainer(i, 0));
         }
     }
     public boolean isCollidingWithBlockables(Movable movable, AABB aabb){
