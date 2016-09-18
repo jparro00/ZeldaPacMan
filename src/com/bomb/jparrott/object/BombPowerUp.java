@@ -16,8 +16,8 @@ public class BombPowerUp extends PowerUp implements Animatable{
 
     private Map<String, Animation> animationMap;
 
-    public BombPowerUp(GameContext gameContext, int xBlock, int yBlock) throws SlickException {
-        super(gameContext, xBlock, yBlock);
+    public BombPowerUp(int xBlock, int yBlock) throws SlickException {
+        super(xBlock, yBlock);
         this.animationMap = AnimationFactory.getAnimationMap(this);
         this.sprite = animationMap.get(AnimationFactory.DEFAULT);
     }

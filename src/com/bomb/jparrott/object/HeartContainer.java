@@ -20,8 +20,8 @@ public class HeartContainer extends GameObject {
     private List<Image> images;
     private Image currentImage;
 
-    public HeartContainer(GameContext gameContext, int xBlock, int yBlock) throws SlickException {
-        super(gameContext, 0, 0, 32, 32);
+    public HeartContainer(int xBlock, int yBlock) throws SlickException {
+        super(0, 0, 32, 32);
 
         //set the x,y coordinates by block/tile instead of by pixel location.  NOTE we have passed 0,0 in to GameObject constructor
         this.setXBlock((int) xBlock);

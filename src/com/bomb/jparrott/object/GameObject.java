@@ -24,12 +24,12 @@ public abstract class GameObject implements Renderable, Destroyable{
     protected volatile GameContext gameContext;
     protected int renderableLayer;
 
-    protected GameObject(GameContext gameContext, float x, float y, int width, int height) {
+    protected GameObject(float x, float y, int width, int height) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
-        this.gameContext = gameContext;
+        this.gameContext = GameContext.getInstance();
         this.renderableLayer = DEFAULT_RENDERABLE_LAYER;
     }
 
@@ -158,9 +158,6 @@ public abstract class GameObject implements Renderable, Destroyable{
     }
     public GameContext getGameContext() {
         return gameContext;
-    }
-    public void setGameContext(GameContext gameContext) {
-        this.gameContext = gameContext;
     }
     public float getCenterX() {
         return x + (width / 2);

@@ -25,12 +25,12 @@ public abstract class Character extends GameObject implements Mover, Movable, An
     protected Animation currentAnimation;
     protected SpriteSheet spriteSheet;
 
-    protected Character(GameContext gameContext, int xBlock, int yBlock, int width, int height, float speed) throws SlickException {
-        this(gameContext, xBlock, yBlock, width, height, speed, width, height);
+    protected Character(int xBlock, int yBlock, int width, int height, float speed) throws SlickException {
+        this(xBlock, yBlock, width, height, speed, width, height);
     }
 
-    protected Character(GameContext gameContext, int xBlock, int yBlock, int width, int height, float speed, int killZoneWidth, int killZoneHeight) throws SlickException{
-        super(gameContext, 0, 0, width, height);
+    protected Character(int xBlock, int yBlock, int width, int height, float speed, int killZoneWidth, int killZoneHeight) throws SlickException{
+        super(0, 0, width, height);
 
         //set the x,y coordinates by block/tile instead of by pixel location.  NOTE we have passed 0,0 in to GameObject constructor
         this.setXBlock((int) xBlock);
