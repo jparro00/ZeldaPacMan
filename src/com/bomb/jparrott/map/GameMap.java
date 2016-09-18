@@ -1,6 +1,8 @@
 package com.bomb.jparrott.map;
 
 import com.bomb.jparrott.object.GameObject;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.dyn4j.geometry.AABB;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.tiled.Layer;
@@ -25,9 +27,11 @@ public class GameMap extends TiledMap implements TileBasedMap{
     public final static int RENDERABLE_LAYER_LOWER = 1;
     public final static int RENDERABLE_LAYER_UPPER = 2;
     private Tile[][] tiles;
+    private final Logger log;
 
     public GameMap(String tmxFile) throws SlickException{
         super(tmxFile);
+        this.log = LogManager.getLogger(this.getClass());
         this.tiles = new Tile[width][height];
 
         for (int xAxis = 0; xAxis < width; xAxis++){

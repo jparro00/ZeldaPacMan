@@ -1,6 +1,8 @@
 package com.bomb.jparrott.map;
 
 import com.bomb.jparrott.object.Blockable;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.dyn4j.geometry.AABB;
 
 import java.util.HashMap;
@@ -16,11 +18,13 @@ public class Tile implements Blockable{
     public static final String PORTAL = "portal";
     public static final String GO_TO = "goTo";
 
+    private final Logger log;
     private AABB aabb;
     private Map<String, Object> attributes;
     private boolean immaterial;
 
     public Tile(GameMap map, int xBlock, int yBlock){
+        this.log = LogManager.getLogger(this.getClass());
         this.attributes = new HashMap();
         this.attributes.put("tileX", xBlock);
         this.attributes.put("tileY", yBlock);

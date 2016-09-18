@@ -6,6 +6,8 @@ import com.bomb.jparrott.object.CoinPowerUp;
 import com.bomb.jparrott.object.Enemy;
 import com.bomb.jparrott.object.Explosion;
 import com.bomb.jparrott.object.Player;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.SlickException;
@@ -35,6 +37,7 @@ public class AnimationFactory {
     private final static Class BOMB_POWER_UP_CLASS = BombPowerUp.class;
     private final static Class COIN_POWER_UP_CLASS = CoinPowerUp.class;
 
+    private static final Logger log = LogManager.getLogger(AnimationFactory.class);
 
     //no constructor
     private AnimationFactory(){}
