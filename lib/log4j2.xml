@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Appenders>
+        <Console name="STDOUT" target="SYSTEM_OUT">
+            <!--PatternLayout pattern="%d %-5p [%t] %C{2} (%F:%L) - %m%n"/-->
+            <!--PatternLayout pattern="[%t] %-5p %C{2} (%F:%L) - %m%n"/-->
+            <PatternLayout pattern="%5p %t %c{4}:%L - %m%n"/>
+        </Console>
+    </Appenders>
+    <Loggers>
+        <Logger name="com.bomb.jparrott" level="warn"/>
+        <Root level="warn">
+            <AppenderRef ref="STDOUT"/>
+        </Root>
+    </Loggers>
+</Configuration>

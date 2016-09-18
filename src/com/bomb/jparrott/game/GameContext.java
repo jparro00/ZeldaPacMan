@@ -17,6 +17,8 @@ import com.bomb.jparrott.object.Movable;
 import com.bomb.jparrott.object.Player;
 import com.bomb.jparrott.object.Renderable;
 import com.bomb.jparrott.util.Util;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.dyn4j.geometry.AABB;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Game;
@@ -41,6 +43,7 @@ public class GameContext {
 
     private GameContainer container;
     private GameMap map;
+    private final Logger log;
 
     //TODO: remove all object types and maintain them all in a single gameObjects set
     private Set<GameObject> gameObjects;
@@ -61,6 +64,7 @@ public class GameContext {
          */
         this.instance = this;
 
+        this.log = LogManager.getLogger(this.getClass());
         this.map = map;
         this.container = container;
         this.gameObjects = new HashSet<GameObject>();

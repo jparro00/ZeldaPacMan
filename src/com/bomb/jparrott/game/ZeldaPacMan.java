@@ -4,6 +4,8 @@ import com.bomb.jparrott.map.GameMap;
 import com.bomb.jparrott.object.CoinPowerUp;
 import com.bomb.jparrott.object.Player;
 import com.bomb.jparrott.object.PowerUp;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.GameContainer;
@@ -34,6 +36,7 @@ public class ZeldaPacMan extends BasicGame
 
     private static AppGameContainer app;
 
+    private final Logger log;
     private volatile GameContext gameContext;
     private List<GameMap> maps;
     private Iterator<GameMap> mapIterator;
@@ -43,6 +46,7 @@ public class ZeldaPacMan extends BasicGame
 
     public ZeldaPacMan(){
         super("Zelda PacMan");
+        this.log = LogManager.getLogger(this.getClass());
     }
 
     public static void main(String [] arguments){

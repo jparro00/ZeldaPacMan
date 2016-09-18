@@ -2,6 +2,8 @@ package com.bomb.jparrott.object;
 
 import com.bomb.jparrott.game.GameContext;
 import com.bomb.jparrott.map.GameMap;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.dyn4j.geometry.AABB;
 import org.newdawn.slick.Game;
 import org.newdawn.slick.GameContainer;
@@ -17,6 +19,7 @@ public abstract class GameObject implements Renderable, Destroyable{
 
     public final static int DEFAULT_RENDERABLE_LAYER = 1;
 
+    protected final Logger log;
     protected float x, y;
     protected int width, height;
     protected boolean destroyed;
@@ -25,6 +28,7 @@ public abstract class GameObject implements Renderable, Destroyable{
     protected int renderableLayer;
 
     protected GameObject(float x, float y, int width, int height) {
+        this.log = LogManager.getLogger(this.getClass());
         this.x = x;
         this.y = y;
         this.width = width;
