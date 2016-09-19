@@ -57,6 +57,8 @@ public class GameContext {
 
     private GameContext(GameContainer container, GameMap map) throws SlickException{
 
+        this.log = LogManager.getLogger(this.getClass());
+
         /*
          * not sure if this is the right way to do this... I was getting an NPE
          * when I called getInstance in some of the objects below that I am creating
@@ -64,45 +66,9 @@ public class GameContext {
          */
         this.instance = this;
 
-        this.log = LogManager.getLogger(this.getClass());
-        this.map = map;
         this.container = container;
-        this.gameObjects = new HashSet<GameObject>();
-        this.blockables = new HashSet<Blockable>();
-        this.renderables = new HashSet<Renderable>();
-        this.hazards = new HashSet<Hazard>();
-        this.enemies = new HashSet<Enemy>();
-        this.powerUps = new HashSet<PowerUp>();
-        this.fog = new Image("data/images/fog.png");
 
-        Tile[][] tiles = map.getTiles();
-        for (int xAxis = 0; xAxis < tiles.length; xAxis++) {
-            for (int yAxis = 0; yAxis < tiles[xAxis].length; yAxis++) {
-                Tile tile = tiles[xAxis][yAxis];
-                Map<String, Object> tileAttributes = tile.getAttributes();
-                if(tile.isBlocked()){
-                    blockables.add(tile);
-                }
-                if("coin".equals(tileAttributes.get("objectStart"))){
-                    this.add(new CoinPowerUp(xAxis, yAxis));
-                }
-                if("bomb".equals(tileAttributes.get("objectStart"))){
-                    this.add(new BombPowerUp(xAxis, yAxis));
-                }
-                if("player".equals(tileAttributes.get("objectStart"))){
-                    this.add(new Player(xAxis, yAxis));
-                }
-                if("enemy".equals(tileAttributes.get("objectStart"))){
-                    this.add(new Enemy(xAxis, yAxis, Movement.FOLLOW));
-                }
-            }
-        }
-
-        //add the heart containers for each of player lives
-        for(int i = 0; i < player.getLives(); i++){
-            add(new HeartContainer(i, 0));
-        }
-
+        initMap(map);
     }
 
     public static GameContext getInstance() {
@@ -185,82 +151,6 @@ public class GameContext {
     }
 
     /**
-     * removes all instances of a given class from all object sets
-     * @param c
-     */
-    public void purge(Object o){
-
-        Class c = o.getClass();
-        Iterator iterator;
-
-        if(o instanceof GameObject){
-            iterator = gameObjects.iterator();
-            while (iterator.hasNext()){
-                Object object = iterator.next();
-                Class objectClass = object.getClass();
-                if(c.equals(objectClass)){
-                    iterator.remove();
-                }
-            }
-        }
-        if(o instanceof Blockable){
-            iterator = blockables.iterator();
-            while (iterator.hasNext()){
-                Object object = iterator.next();
-                Class objectClass = object.getClass();
-                if(c.equals(objectClass)){
-                    iterator.remove();
-                }
-            }
-        }
-        if(o instanceof Renderable){
-            //debug
-            iterator = renderables.iterator();
-            while (iterator.hasNext()){
-                Object object = iterator.next();
-                Class objectClass = object.getClass();
-                if(c.equals(objectClass)){
-                    iterator.remove();
-                }
-            }
-        }
-        if(o instanceof Hazard){
-            iterator = hazards.iterator();
-            while (iterator.hasNext()){
-                Object object = iterator.next();
-                Class objectClass = object.getClass();
-                if(c.equals(objectClass)){
-                    iterator.remove();
-                }
-            }
-        }
-        if(o instanceof Enemy){
-            iterator = enemies.iterator();
-            while (iterator.hasNext()){
-                Object object = iterator.next();
-                Class objectClass = object.getClass();
-                if(c.equals(objectClass)){
-                    iterator.remove();
-                }
-            }
-        }
-        if(o instanceof PowerUp){
-            iterator = powerUps.iterator();
-            while (iterator.hasNext()){
-                Object object = iterator.next();
-                Class objectClass = object.getClass();
-                if(c.equals(objectClass)){
-                    iterator.remove();
-                }
-            }
-        }
-        if(o instanceof Player){
-            this.player = null;
-        }
-
-    }
-
-    /**
      * removes any object marked as destroyed from all of the appropriate game object sets
      */
     private void cleanupDestroyedObjects(){
@@ -326,57 +216,66 @@ public class GameContext {
         return added;
     }
 
-    public GameContext newMap(GameMap map) throws SlickException{
-        GameContext newGameContext = new GameContext(container, map);
-        newGameContext.purge(player);
-        newGameContext.setPlayer(player);
+    public void initMap(GameMap map)throws SlickException{
 
-        //TODO: clean this purge method up. the object parameter is just a bandaid
-        newGameContext.purge(new HeartContainer(0, 0));
+        this.map = map;
+        this.gameObjects = new HashSet<GameObject>();
+        this.blockables = new HashSet<Blockable>();
+        this.renderables = new HashSet<Renderable>();
+        this.hazards = new HashSet<Hazard>();
+        this.enemies = new HashSet<Enemy>();
+        this.powerUps = new HashSet<PowerUp>();
+        this.fog = new Image("data/images/fog.png");
 
-        //add the heart containers for each of player lives
-        for(int i = 0; i < this.player.getLives(); i++){
-            newGameContext.add(new HeartContainer(i, 0));
+        Tile[][] tiles = map.getTiles();
+        for (int xAxis = 0; xAxis < tiles.length; xAxis++) {
+            for (int yAxis = 0; yAxis < tiles[xAxis].length; yAxis++) {
+                Tile tile = tiles[xAxis][yAxis];
+                Map<String, Object> tileAttributes = tile.getAttributes();
+                if(tile.isBlocked()){
+                    blockables.add(tile);
+                }
+                if("coin".equals(tileAttributes.get("objectStart"))){
+                    this.add(new CoinPowerUp(xAxis, yAxis));
+                }
+                if("bomb".equals(tileAttributes.get("objectStart"))){
+                    this.add(new BombPowerUp(xAxis, yAxis));
+                }
+                if("player".equals(tileAttributes.get("objectStart"))){
+                    if(player == null){
+                        this.add(new Player(xAxis, yAxis));
+                    }else{
+                        player.setXBlock(xAxis);
+                        player.setYBlock(yAxis);
+                        this.add(player);
+                    }
+                }
+                if("enemy".equals(tileAttributes.get("objectStart"))){
+                    this.add(new Enemy(xAxis, yAxis, Movement.FOLLOW));
+                }
+            }
         }
 
-        return newGameContext;
+        //add the heart containers for each of player lives
+        for(int i = 0; i < player.getLives(); i++){
+            log.warn("player lives: " + player.getLives());
+            add(new HeartContainer(i, 0));
+        }
     }
 
-    public GameContext restart() throws SlickException {
-        GameContext newGameContext = new GameContext(container, map);
-        initGameContext(container, map);
+    public void restart() throws SlickException {
+        this.player.revive();
         Set<PowerUp> remainingPowerUps = powerUps;
-        Set<PowerUp> powerUps = newGameContext.getPowerUps();
+        initMap(map);
+        Set<PowerUp> powerUps = getPowerUps();
 
         //mark all these objects for destruction
         for(PowerUp powerUp : powerUps){
             powerUp.setDestroyed(true);
         }
-        newGameContext.addAll(remainingPowerUps);
-
-        this.player.revive();
-        newGameContext.setPlayer(this.player);
-
-        //TODO: clean this purge method up. the object parameter is just a bandaid
-        newGameContext.purge(new HeartContainer(0, 0));
-
-        //add the heart containers for each of player lives
-        for(int i = 0; i < this.player.getLives(); i++){
-            newGameContext.add(new HeartContainer(i, 0));
-        }
-
-        return newGameContext;
+        addAll(remainingPowerUps);
     }
 
-    public void refreshHeartContainers() throws SlickException{
-        //TODO: clean this purge method up. the object parameter is just a bandaid
-        purge(new HeartContainer(0, 0));
-
-        //add the heart containers for each of player lives
-        for(int i = 0; i < this.player.getLives(); i++){
-            add(new HeartContainer(i, 0));
-        }
-    }
     public boolean isCollidingWithBlockables(Movable movable, AABB aabb){
         boolean isColliding = false;
         for(Blockable blockable : blockables){
@@ -395,51 +294,39 @@ public class GameContext {
     public int getTileWidth(){
         return map.getTileWidth();
     }
-
     public int getTileHeight(){
         return map.getTileHeight();
     }
-
     public GameMap getMap(){
         return map;
     }
-
     public Set<Blockable> getBlockables(){
         return blockables;
     }
-
     public Set<Hazard> getHazards(){
         return hazards;
     }
-
     public Set<Renderable> getRenderables(){
         return renderables;
     }
-
     public Set<GameObject> getGameObjects(){
         return gameObjects;
     }
-
     public Set<PowerUp> getPowerUps(){
         return powerUps;
     }
-
     public Input getInput(){
         return container.getInput();
     }
-
     public int getPlayerXBlock(){
         return player.getXBlock();
     }
-
     public int getPlayerYBlock(){
         return player.getYBlock();
     }
-
     public Player getPlayer(){
         return player;
     }
-
     public void setPlayer(Player player){
         if(this.player instanceof Player){
             Iterator iterator = renderables.iterator();
