@@ -194,6 +194,7 @@ public class Enemy extends Character implements Hazard, Blockable {
     }
 
     public void die(){
+        gameContext.getPlayer().addScore(100);
         dead = true;
         immaterial = true;
         safe = true;
