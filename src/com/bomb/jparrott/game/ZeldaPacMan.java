@@ -116,11 +116,8 @@ public class ZeldaPacMan extends BasicGame
         }
         if(end){
             if(mapIterator.hasNext()){
-                playerLives = gameContext.getPlayer().getLives();
                 currentMap = mapIterator.next();
-                gameContext = GameContext.initGameContext(container, currentMap);
-                gameContext.getPlayer().setLives(playerLives);
-                gameContext.refreshHeartContainers();
+                gameContext.initMap(currentMap);
                 return;
             }
             else{
@@ -133,7 +130,7 @@ public class ZeldaPacMan extends BasicGame
             try{
 //                player.decreaseLives();
                 if(player.getLives() > 0){
-                    gameContext = gameContext.restart();
+                    gameContext.restart();
                 }
 //                gameContext = new GameContext(container, currentMap);
             }catch (SlickException e){
