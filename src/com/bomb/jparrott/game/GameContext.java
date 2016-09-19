@@ -7,6 +7,7 @@ import com.bomb.jparrott.object.Bomb;
 import com.bomb.jparrott.object.BombPowerUp;
 import com.bomb.jparrott.object.CoinPowerUp;
 import com.bomb.jparrott.object.HeartContainer;
+import com.bomb.jparrott.object.HighScore;
 import com.bomb.jparrott.object.Movement;
 import com.bomb.jparrott.object.PowerUp;
 import com.bomb.jparrott.object.Destroyable;
@@ -16,6 +17,7 @@ import com.bomb.jparrott.object.Hazard;
 import com.bomb.jparrott.object.Movable;
 import com.bomb.jparrott.object.Player;
 import com.bomb.jparrott.object.Renderable;
+import com.bomb.jparrott.object.ScoreContainer;
 import com.bomb.jparrott.util.Util;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -54,6 +56,7 @@ public class GameContext {
     private Set<PowerUp> powerUps;
     private Player player;
     private Image fog;
+    private static HighScore highScore;
 
     private GameContext(GameContainer container, GameMap map) throws SlickException{
 
@@ -146,6 +149,10 @@ public class GameContext {
         if(object instanceof Player){
             added = true;
             this.player = (Player)object;
+        }
+        if(object instanceof HighScore){
+            added = true;
+            this.highScore = (HighScore)object;
         }
         return added;
     }
@@ -259,6 +266,15 @@ public class GameContext {
         //add the heart containers for each of player lives
         for(int i = 0; i < player.getLives(); i++){
             add(new HeartContainer(i, 0));
+        }
+
+        add(new ScoreContainer());
+
+        //lazily initialize highScore
+        if(highScore == null){
+            add(HighScore.getInstance());
+        }else{
+            add(highScore);
         }
     }
 

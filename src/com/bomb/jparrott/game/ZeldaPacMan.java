@@ -2,6 +2,7 @@ package com.bomb.jparrott.game;
 
 import com.bomb.jparrott.map.GameMap;
 import com.bomb.jparrott.object.CoinPowerUp;
+import com.bomb.jparrott.object.HighScore;
 import com.bomb.jparrott.object.Player;
 import com.bomb.jparrott.object.PowerUp;
 import org.apache.logging.log4j.LogManager;
@@ -15,6 +16,9 @@ import org.newdawn.slick.Music;
 import org.newdawn.slick.SlickException;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.IllegalFormatCodePointException;
 import java.util.Iterator;
@@ -69,6 +73,22 @@ public class ZeldaPacMan extends BasicGame
                 app.destroy();
             }
         }
+    }
+
+    @Override
+    public boolean closeRequested(){
+        System.out.println("highScore: " + HighScore.getScore());
+        //Save player object for the next time the player joins
+        try(
+                FileOutputStream fout = new FileOutputStream(".\\data\\sav\\score.ser");
+                ObjectOutputStream oos = new ObjectOutputStream(fout);
+        ){
+            HighScore highScore = HighScore.getInstance();
+            oos.writeObject(highScore.getScore());
+        }catch (IOException io){
+            log.error(io);
+        }
+        return true;
     }
 
     @Override
