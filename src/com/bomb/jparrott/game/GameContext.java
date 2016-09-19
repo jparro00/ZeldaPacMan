@@ -258,7 +258,6 @@ public class GameContext {
 
         //add the heart containers for each of player lives
         for(int i = 0; i < player.getLives(); i++){
-            log.warn("player lives: " + player.getLives());
             add(new HeartContainer(i, 0));
         }
     }
