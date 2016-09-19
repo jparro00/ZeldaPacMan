@@ -28,6 +28,7 @@ public class Player extends Character{
 
     private int bombCount;
     private int coinCount;
+    private int score;
     private int lives;
     private boolean dead;
 
@@ -116,9 +117,11 @@ public class Player extends Character{
     public void collect(PowerUp powerUp){
         if(powerUp instanceof BombPowerUp){
             bombCount++;
+            addScore(50);
         }
         if(powerUp instanceof CoinPowerUp){
             coinCount++;
+            addScore(10);
         }
         powerUp.setDestroyed(true);
     }
@@ -224,6 +227,12 @@ public class Player extends Character{
         currentAnimation.draw(x, y);
     }
 
+    public int getScore(){
+        return score;
+    }
+    public void addScore(int score){
+        this.score += score;
+    }
     public int getBombCount() {
         return bombCount;
     }
