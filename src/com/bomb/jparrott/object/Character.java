@@ -85,6 +85,37 @@ public abstract class Character extends GameObject implements Mover, Movable, An
         return isTeleported;
     }
 
+    /**
+     * move Character unless it would collide with tlie at xBlockLimit, yBlockLimit
+     */
+    public void move(Direction direction, int delta, int xBlockLimit, int yBlockLimit){
+        float newX = x;
+        float newY = y;
+
+        switch (direction){
+            case NORTH:
+                newY -= (getSpeed() * delta);
+                break;
+            case SOUTH:
+                newY += (getSpeed() * delta);
+                break;
+            case WEST:
+                newX -= (getSpeed() * delta);
+                break;
+            case EAST:
+                newX += (getSpeed() * delta);
+                break;
+        }
+        AABB testAABB = getTestAABB(newX, newY);
+        AABB tileAABB = gameContext.getMap().getTileAABB(xBlockLimit, yBlockLimit);
+        if(testAABB.overlaps(tileAABB)){
+            return;
+        }else{
+            move(direction, delta);
+        }
+
+    }
+
     @Override
     public void move(Direction direction, int delta) {
 
@@ -120,27 +151,6 @@ public abstract class Character extends GameObject implements Mover, Movable, An
             if(!isBlocked(newX, newY) || isBlocked(x, y)){
                 setX(newX);
                 setY(newY);
-            }
-            //debug assist movement
-            else{
-                int tileWidth = gameContext.getTileWidth();
-                int tileHeight = gameContext.getTileHeight();
-                float tileCenterX = ((getXBlock() * tileWidth) + (tileWidth / 2));
-                float tileCenterY = ((getYBlock() * tileHeight) + (tileHeight / 2));
-                float centerX = getCenterX();
-                float centerY = getCenterY();
-
-                if(Direction.NORTH.equals(direction) || Direction.SOUTH.equals(direction)){
-                    if(Math.abs(tileCenterX - centerX) <= 7){
-                        setCenterX(tileCenterX);
-                    }
-                }
-                else if(Direction.EAST.equals(direction) || Direction.WEST.equals(direction)){
-                    if(Math.abs(tileCenterY - centerY) <= 7){
-                        setCenterY(tileCenterY);
-                    }
-
-                }
             }
         }
 
