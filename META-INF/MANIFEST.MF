@@ -1,4 +1,4 @@
 Manifest-Version: 1.0
-Class-Path: lwjgl.jar jorbis-0.0.15.jar jogg-0.0.7.jar slick.jar dyn4j-3.2.0.jar
+Class-Path: lwjgl.jar jorbis-0.0.15.jar jogg-0.0.7.jar slick.jar dyn4j-3.2.0.jar log4j-api-2.6.2.jar
 Main-Class: com.bomb.jparrott.game.ZeldaPacMan
 
