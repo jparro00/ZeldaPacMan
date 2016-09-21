@@ -195,7 +195,6 @@ public class ZeldaPacMan extends BasicGame
         //set fullscreen mode
         if(container.getInput().isKeyPressed(Input.KEY_F)){
             fullscreen = !fullscreen;
-            //app.setFullscreen(fullscreen);
             if(fullscreen){
                 app.setDisplayMode(1920, 1080, true);
             }else{
