@@ -63,14 +63,6 @@ public class ZeldaPacMan extends BasicGame
             Music music = new Music("data/sounds/Overworld.ogg");
             music.loop();
 
-            /*
-            app = new AppGameContainer(new ZeldaPacMan());
-            app.setDisplayMode(480, 480, false);
-            app.setShowFPS(false);
-            app.setTargetFrameRate(60);
-            app.start();
-            */
-
             app = new AppGameContainer(
                     new ScalableGame(new ZeldaPacMan(),480,480));
             app.setDisplayMode(480, 480, false);
