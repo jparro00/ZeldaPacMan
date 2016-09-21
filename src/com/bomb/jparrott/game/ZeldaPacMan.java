@@ -13,6 +13,7 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.Music;
+import org.newdawn.slick.ScalableGame;
 import org.newdawn.slick.SlickException;
 
 import java.io.File;
@@ -47,6 +48,8 @@ public class ZeldaPacMan extends BasicGame
     private GameMap currentMap;
     private boolean musicOn;
     private boolean soundOn;
+    private boolean fullscreen;
+    private boolean paused;
 
     public ZeldaPacMan(){
         super("Zelda PacMan");
@@ -60,11 +63,21 @@ public class ZeldaPacMan extends BasicGame
             Music music = new Music("data/sounds/Overworld.ogg");
             music.loop();
 
+            /*
             app = new AppGameContainer(new ZeldaPacMan());
             app.setDisplayMode(480, 480, false);
             app.setShowFPS(false);
             app.setTargetFrameRate(60);
             app.start();
+            */
+
+            app = new AppGameContainer(
+                    new ScalableGame(new ZeldaPacMan(),480,480));
+            app.setDisplayMode(480, 480, false);
+            app.setShowFPS(false);
+            app.setTargetFrameRate(60);
+            app.start();
+
         }
         catch (SlickException e){
             e.printStackTrace();
@@ -116,6 +129,11 @@ public class ZeldaPacMan extends BasicGame
     @Override
     public void update(GameContainer container, int delta) throws SlickException {
 
+        //pause game if it doesn't have focus
+        if(!paused){
+            container.setPaused(!container.hasFocus());
+        }
+
         //debug restart game if out of lives
         Player player = gameContext.getPlayer();
         int playerLives = player.getLives();
@@ -148,14 +166,18 @@ public class ZeldaPacMan extends BasicGame
         //debug reset game
         if(container.getInput().isKeyPressed(Input.KEY_ESCAPE)){
             try{
-//                player.decreaseLives();
                 if(player.getLives() > 0){
                     gameContext.restart();
                 }
-//                gameContext = new GameContext(container, currentMap);
             }catch (SlickException e){
                 e.printStackTrace();
             }
+        }
+
+        //pause
+        if(container.getInput().isKeyPressed(Input.KEY_P)){
+            paused = !paused;
+            container.setPaused(paused);
         }
 
         //mute music
@@ -170,7 +192,19 @@ public class ZeldaPacMan extends BasicGame
             app.setSoundOn(soundOn);
         }
 
-        gameContext.update(delta);
+        //set fullscreen mode
+        if(container.getInput().isKeyPressed(Input.KEY_F)){
+            fullscreen = !fullscreen;
+            if(fullscreen){
+                app.setDisplayMode(1920, 1080, true);
+            }else{
+                app.setDisplayMode(480, 480, false);
+            }
+        }
+
+        if(!paused){
+            gameContext.update(delta);
+        }
     }
 
     @Override

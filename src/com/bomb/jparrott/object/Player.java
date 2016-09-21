@@ -2,6 +2,7 @@ package com.bomb.jparrott.object;
 
 import com.bomb.jparrott.animation.AnimationFactory;
 import com.bomb.jparrott.game.GameContext;
+import com.bomb.jparrott.map.GameMap;
 import com.bomb.jparrott.map.Tile;
 import org.dyn4j.geometry.AABB;
 import org.newdawn.slick.Color;
@@ -72,7 +73,7 @@ public class Player extends Character{
      * @param gameContext
      */
     public Player(int xBlock, int yBlock) throws SlickException{
-        this(xBlock, yBlock, 24, 24, 0.15f, 24, 24);
+        this(xBlock, yBlock, 28, 28, 0.15f, 24, 24);
     }
 
     /**
@@ -124,6 +125,168 @@ public class Player extends Character{
             addScore(10);
         }
         powerUp.setDestroyed(true);
+    }
+
+    /**
+     * movement assist to help player navigate through the tiles without bumping into corners.
+     * returns true if the player was moved by this method
+     *
+     * @param direction
+     * @param delta
+     * @return
+     */
+    public boolean movementAssist(Direction direction, int delta){
+
+        boolean isAssisted = false;
+
+        //enclosing everything in a try-catch, as we could conceivably run into an ArrayIndexOutOfBoundsException
+        try{
+            float newX = x;
+            float newY = y;
+
+            int tileWidth = gameContext.getTileWidth();
+            int tileHeight = gameContext.getTileHeight();
+            float tileCenterX = ((getXBlock() * tileWidth) + (tileWidth / 2));
+            float tileCenterY = ((getYBlock() * tileHeight) + (tileHeight / 2));
+            float centerX = getCenterX();
+            float centerY = getCenterY();
+            int xBlock = getXBlock();
+            int yBlock = getYBlock();
+            GameMap map = gameContext.getMap();
+
+            this.direction = direction;
+            switch (direction){
+                case NORTH:
+                    newY -= (getSpeed() * delta);
+
+                    //if the player is blocked by an obstacle
+                    if(isBlocked(newX, newY)){
+
+                        //check if the path NORTH is clear
+                        if(!map.isBlocked(xBlock, yBlock - 1)){
+
+                            //if blocked on right corner, move left
+                            if(tileCenterX < centerX){
+                                isAssisted = true;
+                                move(Direction.WEST, delta, xBlock - 1, yBlock);
+                            }
+                            //else blocked on left corner, move right
+                            else{
+                                isAssisted = true;
+                                move(Direction.EAST, delta, xBlock + 1, yBlock);
+                            }
+                        }
+
+                        //else check if path NORTH-WEST is clear
+                        else if(tileCenterX > centerX) {
+                            if(!map.isBlocked(xBlock - 1, yBlock) && !map.isBlocked(xBlock - 1, yBlock - 1)){
+                                isAssisted = true;
+                                move(Direction.WEST, delta, xBlock - 2, yBlock);
+                            }
+                        }
+                        //else check if path NORTH-EAST is clear
+                        else if(tileCenterX < centerX) {
+                            if(!map.isBlocked(xBlock + 1, yBlock) && !map.isBlocked(xBlock + 1, yBlock - 1)){
+                                isAssisted = true;
+                                move(Direction.EAST, delta, xBlock + 2, yBlock);
+                            }
+                        }
+                    }
+                    break;
+                case SOUTH:
+                    newY += (getSpeed() * delta);
+                    if(isBlocked(newX, newY)){
+                        if(!map.isBlocked(xBlock, yBlock + 1)){
+                            if(tileCenterX < centerX){
+                                isAssisted = true;
+                                move(Direction.WEST, delta, xBlock - 1, yBlock);
+                            }
+                            else{
+                                isAssisted = true;
+                                move(Direction.EAST, delta, xBlock + 1, yBlock);
+                            }
+                        }
+                        else if(tileCenterX > centerX) {
+                            if(!map.isBlocked(xBlock - 1, yBlock) && !map.isBlocked(xBlock - 1, yBlock + 1)){
+                                isAssisted = true;
+                                move(Direction.WEST, delta, xBlock - 2, yBlock);
+                            }
+                        }
+                        else if(tileCenterX < centerX) {
+                            if(!map.isBlocked(xBlock + 1, yBlock) && !map.isBlocked(xBlock + 1, yBlock + 1)){
+                                isAssisted = true;
+                                move(Direction.EAST, delta, xBlock + 2, yBlock);
+                            }
+                        }
+                    }
+                    break;
+                case WEST:
+                    newX -= (getSpeed() * delta);
+                    if(isBlocked(newX, newY)){
+                        if(!map.isBlocked(xBlock - 1, yBlock)){
+                            if(tileCenterY < centerY){
+                                isAssisted = true;
+                                move(Direction.NORTH, delta, xBlock, yBlock - 1);
+                            }
+                            else{
+                                isAssisted = true;
+                                move(Direction.SOUTH, delta, xBlock, yBlock + 1);
+                            }
+                        }
+                        else if(tileCenterY > centerY) {
+                            if(!map.isBlocked(xBlock, yBlock - 1) && !map.isBlocked(xBlock - 1, yBlock - 1)){
+                                isAssisted = true;
+                                move(Direction.NORTH, delta, xBlock, yBlock - 2);
+                            }
+                        }
+                        else if(tileCenterY < centerY) {
+                            if(!map.isBlocked(xBlock, yBlock + 1) && !map.isBlocked(xBlock - 1, yBlock + 1)){
+                                isAssisted = true;
+                                move(Direction.SOUTH, delta, xBlock, yBlock + 2);
+                            }
+                        }
+                    }
+                    break;
+                case EAST:
+                    newX += (getSpeed() * delta);
+                    if(isBlocked(newX, newY)){
+                        if(!map.isBlocked(xBlock + 1, yBlock)){
+                            if(tileCenterY < centerY){
+                                isAssisted = true;
+                                move(Direction.NORTH, delta, xBlock, yBlock - 1);
+                            }
+                            else{
+                                isAssisted = true;
+                                move(Direction.SOUTH, delta, xBlock, yBlock + 1);
+                            }
+                        }
+                        else if(tileCenterY > centerY) {
+                            if(!map.isBlocked(xBlock, yBlock - 1) && !map.isBlocked(xBlock + 1, yBlock - 1)){
+                                isAssisted = true;
+                                move(Direction.NORTH, delta, xBlock, yBlock - 2);
+                            }
+                        }
+                        else if(tileCenterY < centerY) {
+                            if(!map.isBlocked(xBlock, yBlock + 1) && !map.isBlocked(xBlock + 1, yBlock + 1)){
+                                isAssisted = true;
+                                move(Direction.SOUTH, delta, xBlock, yBlock + 2);
+                            }
+                        }
+                    }
+                    break;
+            }
+        }catch (ArrayIndexOutOfBoundsException ex){
+            log.warn(ex);
+        }
+
+        return isAssisted;
+    }
+
+    @Override
+    public void move(Direction direction, int delta){
+        if(!movementAssist(direction, delta)){
+            super.move(direction, delta);
+        }
     }
 
     @Override
@@ -236,28 +399,19 @@ public class Player extends Character{
     public int getBombCount() {
         return bombCount;
     }
-
     public void setBombCount(int bombCount) {
         this.bombCount = bombCount;
     }
-
     public int getLives() {
         return lives;
     }
-
     public void setLives(Integer lives) {
         this.lives = lives;
     }
-
     public void decreaseLives(){
         this.lives--;
     }
-
     public boolean isDead(){
         return dead;
-    }
-
-    public void setDead(boolean dead){
-        this.dead = dead;
     }
 }
