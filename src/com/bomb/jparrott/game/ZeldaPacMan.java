@@ -145,6 +145,10 @@ public class ZeldaPacMan extends BasicGame
             }
         }
         if(end){
+            //restart from map 0 if we get to the end
+            if(!mapIterator.hasNext()){
+                mapIterator = maps.iterator();
+            }
             if(mapIterator.hasNext()){
                 currentMap = mapIterator.next();
                 gameContext.initMap(currentMap);
