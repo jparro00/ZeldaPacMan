@@ -7,6 +7,9 @@ import com.bomb.jparrott.object.Player;
 import com.bomb.jparrott.object.PowerUp;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.lwjgl.LWJGLException;
+import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.DisplayMode;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.GameContainer;
@@ -32,6 +35,7 @@ import java.util.Set;
  */
 public class ZeldaPacMan extends BasicGame
 {
+    public static final String DIR_SAVE = "./data/sav/";
     public static final String TILE_SLOW = "slow";
     public static final String TILE_BLOCKED = "blocked";
     public static final String TILE_PORTAL = "portal";
@@ -50,6 +54,7 @@ public class ZeldaPacMan extends BasicGame
     private boolean soundOn;
     private boolean fullscreen;
     private boolean paused;
+    private volatile GameInput gameInput;
 
     public ZeldaPacMan(){
         super("Zelda PacMan");
@@ -82,10 +87,10 @@ public class ZeldaPacMan extends BasicGame
 
     @Override
     public boolean closeRequested(){
-        System.out.println("highScore: " + HighScore.getScore());
+
         //Save player object for the next time the player joins
         try(
-                FileOutputStream fout = new FileOutputStream(".\\data\\sav\\score.ser");
+                FileOutputStream fout = new FileOutputStream(DIR_SAVE + "score.ser");
                 ObjectOutputStream oos = new ObjectOutputStream(fout);
         ){
             HighScore highScore = HighScore.getInstance();
@@ -93,6 +98,18 @@ public class ZeldaPacMan extends BasicGame
         }catch (IOException io){
             log.error(io);
         }
+
+        //Save player object for the next time the player joins
+        try(
+                FileOutputStream fout = new FileOutputStream(DIR_SAVE + "input_config.ser");
+                ObjectOutputStream oos = new ObjectOutputStream(fout);
+        ){
+            GameInput gameInput = GameInput.getInstance();
+            oos.writeObject(gameInput);
+        }catch (IOException io){
+            log.error(io);
+        }
+
         return true;
     }
 
@@ -109,6 +126,7 @@ public class ZeldaPacMan extends BasicGame
         this.currentMap = mapIterator.next();
 
         gameContext = GameContext.initGameContext(app, currentMap);
+        gameInput = GameInput.getInstance();
 
         this.musicOn = true;
         this.soundOn = true;
@@ -149,7 +167,7 @@ public class ZeldaPacMan extends BasicGame
             if(!mapIterator.hasNext()){
                 mapIterator = maps.iterator();
             }
-            if(mapIterator.hasNext()){
+            if(mapIterator.hasNext()) {
                 currentMap = mapIterator.next();
                 gameContext.initMap(currentMap);
                 return;
@@ -160,18 +178,32 @@ public class ZeldaPacMan extends BasicGame
         }
 
         //debug reset game
-        if(container.getInput().isKeyPressed(Input.KEY_ESCAPE)){
-            try{
-                if(player.getLives() > 0){
-                    gameContext.restart();
+        if(player.isDead()){
+            if(gameInput.released(GameInput.Button.SELECT) || gameInput.released(GameInput.Button.START)){
+                try{
+                    if(player.getLives() > 0){
+                        gameContext.restart();
+                    }
+                }catch (SlickException e){
+                    e.printStackTrace();
                 }
-            }catch (SlickException e){
-                e.printStackTrace();
+            }
+        }
+        if(paused){
+            if(gameInput.released(GameInput.Button.SELECT)){
+                try{
+                    if(player.getLives() > 0){
+                        gameContext.restart();
+                    }
+                }catch (SlickException e){
+                    e.printStackTrace();
+                }
+                paused = false;
             }
         }
 
         //pause
-        if(container.getInput().isKeyPressed(Input.KEY_P)){
+        if(gameInput.released(GameInput.Button.START)){
             paused = !paused;
             container.setPaused(paused);
         }
