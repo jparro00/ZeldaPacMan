@@ -71,6 +71,8 @@ public class GameInput implements Serializable{
                 }catch (IOException | ClassCastException | ClassNotFoundException ex) {
                     log.warn("unable to load input_config file.  Initializing new GameInput");
                     log.warn(ex);
+                }finally {
+                    instance = new GameInput();
                 }
             }
             else {
