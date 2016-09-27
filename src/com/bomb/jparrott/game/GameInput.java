@@ -115,6 +115,7 @@ public class GameInput implements Serializable{
             }
         }
 
+        /*
         //controller
         if(!isDown){
             try{
@@ -142,6 +143,7 @@ public class GameInput implements Serializable{
                 }
             }catch (IndexOutOfBoundsException ex){}
         }
+        */
 
         return isDown;
     }
@@ -156,6 +158,7 @@ public class GameInput implements Serializable{
             }
         }
 
+        /*
         if(!isPressed){
             try {
                 switch (button) {
@@ -178,6 +181,7 @@ public class GameInput implements Serializable{
                 }
             }catch (IndexOutOfBoundsException ex){}
         }
+        */
 
         return isPressed;
     }
