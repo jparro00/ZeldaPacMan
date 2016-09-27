@@ -4,19 +4,17 @@ import com.bomb.jparrott.gui.Menu;
 import com.bomb.jparrott.map.GameMap;
 import com.bomb.jparrott.map.Tile;
 import com.bomb.jparrott.object.Blockable;
-import com.bomb.jparrott.object.Bomb;
 import com.bomb.jparrott.object.BombPowerUp;
 import com.bomb.jparrott.object.CoinPowerUp;
-import com.bomb.jparrott.object.HeartContainer;
-import com.bomb.jparrott.object.HighScore;
-import com.bomb.jparrott.object.Movement;
-import com.bomb.jparrott.object.PowerUp;
 import com.bomb.jparrott.object.Destroyable;
 import com.bomb.jparrott.object.Enemy;
 import com.bomb.jparrott.object.GameObject;
 import com.bomb.jparrott.object.Hazard;
+import com.bomb.jparrott.object.HeartContainer;
+import com.bomb.jparrott.object.HighScore;
 import com.bomb.jparrott.object.Movable;
 import com.bomb.jparrott.object.Player;
+import com.bomb.jparrott.object.PowerUp;
 import com.bomb.jparrott.object.Renderable;
 import com.bomb.jparrott.object.ScoreContainer;
 import com.bomb.jparrott.util.Util;
@@ -25,9 +23,7 @@ import org.apache.logging.log4j.Logger;
 import org.dyn4j.geometry.AABB;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.Color;
-import org.newdawn.slick.Game;
 import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
@@ -420,5 +416,8 @@ public class GameContext {
             this.player = player;
         }
 
+    }
+    public GameContainer getContainer(){
+        return container;
     }
 }

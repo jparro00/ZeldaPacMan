@@ -51,6 +51,8 @@ public class Menu implements Renderable{
         this.items.add(new Item("Music on/off", Action.MUSIC));
         this.items.add(new Item("Sound on/off", Action.SOUND));
         this.items.add(new Item("Fullscreen on/off", Action.FULLSCREEN));
+        this.items.add(new Item("Restart", Action.RESTART));
+        this.items.add(new Item("Quit", Action.EXIT));
     }
 
     public void up(){
@@ -87,7 +89,7 @@ public class Menu implements Renderable{
     }
 
     public enum Action{
-        SOUND, MUSIC, FULLSCREEN
+        SOUND, MUSIC, FULLSCREEN, RESTART, EXIT
     }
 
     @Override
@@ -158,6 +160,16 @@ public class Menu implements Renderable{
                     } catch (SlickException e) {
                         e.printStackTrace();
                     }
+                    break;
+                case RESTART:
+                    try{
+                        gameContext.restart();
+                    } catch (SlickException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case EXIT:
+                    gameContext.getContainer().exit();
                     break;
             }
         }

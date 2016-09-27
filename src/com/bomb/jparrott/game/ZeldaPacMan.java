@@ -189,18 +189,6 @@ public class ZeldaPacMan extends BasicGame
                 }
             }
         }
-        if(paused){
-            if(gameInput.isPressed(GameInput.Button.SELECT)){
-                try{
-                    if(player.getLives() > 0){
-                        gameContext.restart();
-                    }
-                }catch (SlickException e){
-                    e.printStackTrace();
-                }
-                paused = false;
-            }
-        }
 
         //pause
         if(gameInput.isPressed(GameInput.Button.START)){
