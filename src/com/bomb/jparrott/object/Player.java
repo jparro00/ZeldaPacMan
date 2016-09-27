@@ -1,15 +1,12 @@
 package com.bomb.jparrott.object;
 
 import com.bomb.jparrott.animation.AnimationFactory;
-import com.bomb.jparrott.game.GameContext;
+import com.bomb.jparrott.game.GameInput;
 import com.bomb.jparrott.map.GameMap;
 import com.bomb.jparrott.map.Tile;
 import org.dyn4j.geometry.AABB;
-import org.newdawn.slick.Color;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.Sound;
-import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.openal.Audio;
 import org.newdawn.slick.openal.AudioLoader;
 import org.newdawn.slick.util.ResourceLoader;
@@ -32,6 +29,7 @@ public class Player extends Character{
     private int score;
     private int lives;
     private boolean dead;
+    private volatile GameInput gameInput;
 
     /**
      * Primary Constructor
@@ -51,6 +49,7 @@ public class Player extends Character{
         this.renderableLayer = DEFAULT_RENDERABLE_LAYER;
         this.bombCount = DEFAULT_BOMB_COUNT;
         lives = DEFAULT_LIVES_COUNT;
+        gameInput = GameInput.getInstance();
     }
 
     /**
@@ -309,23 +308,23 @@ public class Player extends Character{
 
             //calculate movement
             Direction direction;
-            if (input.isKeyDown(Input.KEY_UP) || input.isKeyDown(Input.KEY_K)) {
+            if (gameInput.isDown(GameInput.Button.UP)) {
                 direction = Direction.NORTH;
                 move(direction, delta);
-            } else if (input.isKeyDown(Input.KEY_DOWN) || input.isKeyDown((Input.KEY_J))) {
+            } else if (gameInput.isDown(GameInput.Button.DOWN)) {
                 direction = Direction.SOUTH;
                 move(direction, delta);
-            } else if (input.isKeyDown(Input.KEY_LEFT) || input.isKeyDown(Input.KEY_H)) {
+            } else if (gameInput.isDown(GameInput.Button.LEFT)) {
                 direction = Direction.WEST;
                 move(direction, delta);
-            } else if (input.isKeyDown(Input.KEY_RIGHT) || input.isKeyDown(Input.KEY_L)) {
+            } else if (gameInput.isDown(GameInput.Button.RIGHT)) {
                 direction = Direction.EAST;
                 move(direction, delta);
             }
 
             //drop bomb if user presses space and there is not another bomb on screen
             Set<GameObject> gameObjects = gameContext.getGameObjects();
-            if (input.isKeyPressed(Input.KEY_SPACE)) {
+            if (gameInput.isDown(GameInput.Button.B)) {
                 //check if there is already a bomb on the screen
                 boolean bombOnScreen = false;
                 for (GameObject gameObject : gameObjects) {

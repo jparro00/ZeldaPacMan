@@ -1,31 +1,30 @@
 package com.bomb.jparrott.game;
 
+import com.bomb.jparrott.gui.Menu;
 import com.bomb.jparrott.map.GameMap;
 import com.bomb.jparrott.map.Tile;
 import com.bomb.jparrott.object.Blockable;
-import com.bomb.jparrott.object.Bomb;
 import com.bomb.jparrott.object.BombPowerUp;
 import com.bomb.jparrott.object.CoinPowerUp;
-import com.bomb.jparrott.object.HeartContainer;
-import com.bomb.jparrott.object.HighScore;
-import com.bomb.jparrott.object.Movement;
-import com.bomb.jparrott.object.PowerUp;
 import com.bomb.jparrott.object.Destroyable;
 import com.bomb.jparrott.object.Enemy;
 import com.bomb.jparrott.object.GameObject;
 import com.bomb.jparrott.object.Hazard;
+import com.bomb.jparrott.object.HeartContainer;
+import com.bomb.jparrott.object.HighScore;
 import com.bomb.jparrott.object.Movable;
+import com.bomb.jparrott.object.Movement;
 import com.bomb.jparrott.object.Player;
+import com.bomb.jparrott.object.PowerUp;
 import com.bomb.jparrott.object.Renderable;
 import com.bomb.jparrott.object.ScoreContainer;
 import com.bomb.jparrott.util.Util;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.dyn4j.geometry.AABB;
+import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.Color;
-import org.newdawn.slick.Game;
 import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
@@ -57,6 +56,13 @@ public class GameContext {
     private Player player;
     private Image fog;
     private static HighScore highScore;
+    private boolean musicOn;
+    private boolean soundOn;
+    private boolean fullscreen;
+    private boolean paused;
+    private GameInput gameInput;
+
+    private Menu menu;
 
     private GameContext(GameContainer container, GameMap map) throws SlickException{
 
@@ -70,6 +76,9 @@ public class GameContext {
         this.instance = this;
 
         this.container = container;
+        this.musicOn = true;
+        this.soundOn = true;
+        this.gameInput = GameInput.getInstance();
 
         initMap(map);
     }
@@ -89,10 +98,21 @@ public class GameContext {
 
     public void update(int delta){
 
-        //update all objects that are currently part of gameObjects
-        Set<GameObject> tempGameObjects = new HashSet<GameObject>(gameObjects);
-        for(GameObject gameObject : tempGameObjects){
-            gameObject.update(delta);
+        GameInput gameInput = GameInput.getInstance();
+
+        if(gameInput.isPressed(GameInput.Button.LB) || gameInput.isPressed(GameInput.Button.RB)){
+            menu.toggle();
+        }
+
+        menu.update();
+
+        //only update game objects if the game is not paused and menu is not toggled
+        if(!container.isPaused() && !menu.isVisible()){
+            //update all objects that are currently part of gameObjects
+            Set<GameObject> tempGameObjects = new HashSet<GameObject>(gameObjects);
+            for(GameObject gameObject : tempGameObjects){
+                gameObject.update(delta);
+            }
         }
 
         cleanupDestroyedObjects();
@@ -115,6 +135,7 @@ public class GameContext {
         if(player.isDead()){
             fog.draw(0, 0, new Color(1, 1, 1, 0.5f));
         }
+        menu.draw();
 
     }
 
@@ -276,6 +297,8 @@ public class GameContext {
         }else{
             add(highScore);
         }
+
+        this.menu = new Menu();
     }
 
     public void restart() throws SlickException {
@@ -306,6 +329,28 @@ public class GameContext {
         return isColliding;
     }
 
+    public void toggleSound(){
+        soundOn = !soundOn;
+        container.setSoundOn(soundOn);
+    }
+
+    public void toggleMusic(){
+        musicOn = !musicOn;
+        container.setMusicOn(musicOn);
+    }
+
+    public void toggleFullscreen()throws SlickException{
+        fullscreen = !fullscreen;
+        if(fullscreen){
+            ((AppGameContainer)container).setDisplayMode(1920, 1080, true);
+        }else{
+            ((AppGameContainer)container).setDisplayMode(480, 480, false);
+        }
+    }
+
+    public boolean isPaused(){
+        return paused;
+    }
     public int getTileWidth(){
         return map.getTileWidth();
     }
@@ -372,5 +417,8 @@ public class GameContext {
             this.player = player;
         }
 
+    }
+    public GameContainer getContainer(){
+        return container;
     }
 }
