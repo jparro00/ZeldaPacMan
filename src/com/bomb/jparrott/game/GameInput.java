@@ -1,8 +1,10 @@
 package com.bomb.jparrott.game;
 
+import com.bomb.jparrott.util.OneToManyBidiMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.newdawn.slick.Input;
+import org.newdawn.slick.SlickException;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,7 +23,7 @@ public class GameInput implements Serializable{
     private int horizontalAxis;
     private int verticalAxis;
     private Map<Button, Integer> buttonMap;
-    private transient Map<Button, Boolean> buttonState;
+    private OneToManyBidiMap<Integer, Button> keyMap;
     private transient static GameInput instance;
     private transient volatile GameContext gameContext;
     private transient volatile Input input;
@@ -31,7 +33,7 @@ public class GameInput implements Serializable{
         this.instance = this;
 
         //hardcode controller info for now
-        this.controller = 3;
+        this.controller = 0;
         this.horizontalAxis = 1;
         this.verticalAxis = 0;
 
@@ -50,6 +52,26 @@ public class GameInput implements Serializable{
         buttonMap.put(Button.DOWN, 1);
         buttonMap.put(Button.LEFT, -1);
         buttonMap.put(Button.RIGHT, 1);
+
+        //default values for buttonMap
+        this.keyMap = new OneToManyBidiMap<>();
+        keyMap.put(Input.KEY_ENTER,Button.A);
+        keyMap.put(Input.KEY_B, Button.B);
+        keyMap.put(Input.KEY_X, Button.X);
+        keyMap.put(Input.KEY_Y, Button.Y);
+        keyMap.put(Input.KEY_P, Button.START);
+        keyMap.put(Input.KEY_ESCAPE, Button.SELECT);
+        keyMap.put(Input.KEY_1, Button.LB);
+        keyMap.put(Input.KEY_2, Button.RB);
+
+        keyMap.put(Input.KEY_UP, Button.UP);
+        keyMap.put(Input.KEY_K, Button.UP);
+        keyMap.put(Input.KEY_DOWN, Button.DOWN);
+        keyMap.put(Input.KEY_J, Button.DOWN);
+        keyMap.put(Input.KEY_LEFT, Button.LEFT);
+        keyMap.put(Input.KEY_H, Button.LEFT);
+        keyMap.put(Input.KEY_RIGHT, Button.RIGHT);
+        keyMap.put(Input.KEY_L, Button.RIGHT);
 
         initTransientVariables();
     }
@@ -71,7 +93,6 @@ public class GameInput implements Serializable{
                 }catch (IOException | ClassCastException | ClassNotFoundException ex) {
                     log.warn("unable to load input_config file.  Initializing new GameInput");
                     log.warn(ex);
-                }finally {
                     instance = new GameInput();
                 }
             }
@@ -83,116 +104,80 @@ public class GameInput implements Serializable{
         return instance;
     }
 
-    public boolean isPressed(Button button){
+    public boolean isDown(Button button){
 
-        boolean isPressed = false;
+        boolean isDown = false;
 
-        switch (button) {
-            case UP:
-                if(input.isKeyPressed(Input.KEY_UP))
-                    isPressed = true;
-                else if(input.isKeyDown(Input.KEY_K))
-                    isPressed = true;
+        for(Integer i : keyMap.getKey(button)) {
+            if(input.isKeyDown(i)){
+                isDown = true;
                 break;
-            case DOWN:
-                if(input.isKeyPressed(Input.KEY_DOWN))
-                    isPressed = true;
-                else if(input.isKeyDown(Input.KEY_J))
-                    isPressed = true;
-                break;
-            case LEFT:
-                if (input.isKeyDown(Input.KEY_LEFT))
-                    isPressed = true;
-                else if(input.isKeyDown(Input.KEY_H))
-                    isPressed = true;
-                break;
-            case RIGHT:
-                if (input.isKeyDown(Input.KEY_RIGHT))
-                    isPressed = true;
-                else if(input.isKeyDown(Input.KEY_L))
-                    isPressed = true;
-                break;
-            case START:
-                if(input.isKeyDown(Input.KEY_P))
-                    isPressed = true;
-                break;
-            case SELECT:
-                if(input.isKeyDown(Input.KEY_ESCAPE))
-                    isPressed = true;
-                break;
-            case A:
-                break;
-            case B:
-                if (input.isKeyDown(Input.KEY_SPACE))
-                    isPressed = true;
-                break;
-            case X:
-                break;
-            case Y:
-                break;
-            case LB:
-                break;
-            case RB:
-                break;
+            }
         }
 
         //controller
-        try{
-            switch (button) {
-                case UP:
-                    if(get(button).equals((int)input.getAxisValue(controller, verticalAxis)))
-                        isPressed = true;
-                    break;
-                case DOWN:
-                    if(get(button).equals((int)input.getAxisValue(controller, verticalAxis)))
-                        isPressed = true;
-                    break;
-                case LEFT:
-                    if(get(button).equals((int)input.getAxisValue(controller, horizontalAxis)))
-                        isPressed = true;
-                    break;
-                case RIGHT:
-                    if(get(button).equals((int)input.getAxisValue(controller, horizontalAxis)))
-                        isPressed = true;
-                    break;
-                case START:
-                    if(input.isButtonPressed(get(button), controller))
-                        isPressed = true;
-                    break;
-                case SELECT:
-                    if(input.isButtonPressed(get(button), controller))
-                        isPressed = true;
-                    break;
-                case A:
-                    if(input.isButtonPressed(get(button), controller))
-                        isPressed = true;
-                    break;
-                case B:
-                    if(input.isButtonPressed(get(button), controller))
-                        isPressed = true;
-                    break;
-                case X:
-                    if(input.isButtonPressed(get(button), controller))
-                        isPressed = true;
-                    break;
-                case Y:
-                    if(input.isButtonPressed(get(button), controller))
-                        isPressed = true;
-                    break;
-                case LB:
-                    if(input.isButtonPressed(get(button), controller))
-                        isPressed = true;
-                    break;
-                case RB:
-                    if(input.isButtonPressed(get(button), controller))
-                        isPressed = true;
-                    break;
+        if(!isDown){
+            try{
+                switch (button) {
+                    case UP:
+                        if(get(button).equals((int) input.getAxisValue(controller, verticalAxis)))
+                            isDown = true;
+                        break;
+                    case DOWN:
+                        if(get(button).equals((int) input.getAxisValue(controller, verticalAxis)))
+                            isDown = true;
+                        break;
+                    case LEFT:
+                        if(get(button).equals((int) input.getAxisValue(controller, horizontalAxis)))
+                            isDown = true;
+                        break;
+                    case RIGHT:
+                        if(get(button).equals((int) input.getAxisValue(controller, horizontalAxis)))
+                            isDown = true;
+                        break;
+                    default:
+                        if(input.isButtonPressed(get(button), controller))
+                            isDown = true;
+                        break;
+                }
+            }catch (IndexOutOfBoundsException ex){}
+        }
+
+        return isDown;
+    }
+
+    public boolean isPressed(Button button){
+        boolean isPressed = false;
+
+        for(Integer i : keyMap.getKey(button)) {
+            if(input.isKeyPressed(i)){
+                isPressed = true;
+                break;
             }
+        }
 
-            //update buttonState
-            buttonState.put(button, isPressed);
-
-        }catch (IndexOutOfBoundsException ex){}
+        if(!isPressed){
+            try {
+                switch (button) {
+                    case UP:
+                        if(input.isControlPressed(2, controller))
+                            isPressed = true;
+                        break;
+                    case DOWN:
+                        if(input.isControlPressed(3, controller))
+                            isPressed = true;
+                        break;
+                    case LEFT:
+                        throw new UnsupportedOperationException("isPressed(left) unsupported");
+                    case RIGHT:
+                        throw new UnsupportedOperationException("isPressed(right) unsupported");
+                    default:
+                        if(input.isControlPressed(get(button) + 4, controller))
+                            isPressed = true;
+                        break;
+                }
+            }catch (IndexOutOfBoundsException ex){}
+        }
 
         return isPressed;
     }
@@ -204,27 +189,7 @@ public class GameInput implements Serializable{
         gameContext = GameContext.getInstance();
         input = gameContext.getInput();
 
-        //init the buttonState
-        buttonState = new HashMap<>();
-        for(Button button : buttonMap.keySet()){
-            buttonState.put(button, isPressed(button));
-        }
 
-    }
-
-    /**
-     * check if a particular button has been pressed and released (similar to awt events)
-     * @param button
-     * @return
-     */
-    public boolean released(Button button){
-
-        boolean wasPressed = buttonState.get(button);
-
-        //note that button state is updated by isPressed
-        boolean isPressed = isPressed(button);
-
-        return wasPressed == true && isPressed == false;
     }
 
     /**

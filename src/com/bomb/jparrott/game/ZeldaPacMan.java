@@ -179,7 +179,7 @@ public class ZeldaPacMan extends BasicGame
 
         //debug reset game
         if(player.isDead()){
-            if(gameInput.released(GameInput.Button.SELECT) || gameInput.released(GameInput.Button.START)){
+            if(gameInput.isPressed(GameInput.Button.SELECT) || gameInput.isPressed(GameInput.Button.START)){
                 try{
                     if(player.getLives() > 0){
                         gameContext.restart();
@@ -190,7 +190,7 @@ public class ZeldaPacMan extends BasicGame
             }
         }
         if(paused){
-            if(gameInput.released(GameInput.Button.SELECT)){
+            if(gameInput.isPressed(GameInput.Button.SELECT)){
                 try{
                     if(player.getLives() > 0){
                         gameContext.restart();
@@ -203,7 +203,7 @@ public class ZeldaPacMan extends BasicGame
         }
 
         //pause
-        if(gameInput.released(GameInput.Button.START)){
+        if(gameInput.isPressed(GameInput.Button.START)){
             paused = !paused;
             container.setPaused(paused);
         }
