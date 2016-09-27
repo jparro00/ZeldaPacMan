@@ -13,6 +13,7 @@ import com.bomb.jparrott.object.Hazard;
 import com.bomb.jparrott.object.HeartContainer;
 import com.bomb.jparrott.object.HighScore;
 import com.bomb.jparrott.object.Movable;
+import com.bomb.jparrott.object.Movement;
 import com.bomb.jparrott.object.Player;
 import com.bomb.jparrott.object.PowerUp;
 import com.bomb.jparrott.object.Renderable;
@@ -278,7 +279,7 @@ public class GameContext {
                     }
                 }
                 if("enemy".equals(tileAttributes.get("objectStart"))){
-                    //this.add(new Enemy(xAxis, yAxis, Movement.FOLLOW));
+                    this.add(new Enemy(xAxis, yAxis, Movement.FOLLOW));
                 }
             }
         }
