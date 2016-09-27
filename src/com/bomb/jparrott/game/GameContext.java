@@ -103,39 +103,14 @@ public class GameContext {
 
         GameInput gameInput = GameInput.getInstance();
 
-        //pause
-        if(gameInput.isPressed(GameInput.Button.START)){
-            paused = !paused;
-            container.setPaused(paused);
-        }
-
         if(gameInput.isPressed(GameInput.Button.LB) || gameInput.isPressed(GameInput.Button.RB)){
             menu.toggle();
         }
 
-
-        //mute music
-        if(container.getInput().isKeyPressed(Input.KEY_M)){
-            toggleMusic();
-        }
-
-        //mute sound
-        if(container.getInput().isKeyPressed(Input.KEY_S)){
-            toggleSound();
-        }
-
-        //set fullscreen mode
-        if(container.getInput().isKeyPressed(Input.KEY_F)){
-            try{
-                toggleFullscreen();
-            } catch (SlickException e) {
-                e.printStackTrace();
-            }
-        }
-
         menu.update();
 
-        if(!paused && !menu.isVisible()){
+        //only update game objects if the game is not paused and menu is not toggled
+        if(!container.isPaused() && !menu.isVisible()){
             //update all objects that are currently part of gameObjects
             Set<GameObject> tempGameObjects = new HashSet<GameObject>(gameObjects);
             for(GameObject gameObject : tempGameObjects){
