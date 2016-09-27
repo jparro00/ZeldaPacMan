@@ -1,5 +1,6 @@
 package com.bomb.jparrott.game;
 
+import com.bomb.jparrott.gui.Menu;
 import com.bomb.jparrott.map.GameMap;
 import com.bomb.jparrott.map.Tile;
 import com.bomb.jparrott.object.Blockable;
@@ -22,6 +23,7 @@ import com.bomb.jparrott.util.Util;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.dyn4j.geometry.AABB;
+import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Game;
 import org.newdawn.slick.GameContainer;
@@ -57,6 +59,13 @@ public class GameContext {
     private Player player;
     private Image fog;
     private static HighScore highScore;
+    private boolean musicOn;
+    private boolean soundOn;
+    private boolean fullscreen;
+    private boolean paused;
+    private GameInput gameInput;
+
+    private Menu menu;
 
     private GameContext(GameContainer container, GameMap map) throws SlickException{
 
@@ -70,6 +79,9 @@ public class GameContext {
         this.instance = this;
 
         this.container = container;
+        this.musicOn = true;
+        this.soundOn = true;
+        this.gameInput = GameInput.getInstance();
 
         initMap(map);
     }
@@ -89,10 +101,46 @@ public class GameContext {
 
     public void update(int delta){
 
-        //update all objects that are currently part of gameObjects
-        Set<GameObject> tempGameObjects = new HashSet<GameObject>(gameObjects);
-        for(GameObject gameObject : tempGameObjects){
-            gameObject.update(delta);
+        GameInput gameInput = GameInput.getInstance();
+
+        //pause
+        if(gameInput.isPressed(GameInput.Button.START)){
+            paused = !paused;
+            container.setPaused(paused);
+        }
+
+        if(gameInput.isPressed(GameInput.Button.LB) || gameInput.isPressed(GameInput.Button.RB)){
+            menu.toggle();
+        }
+
+
+        //mute music
+        if(container.getInput().isKeyPressed(Input.KEY_M)){
+            toggleMusic();
+        }
+
+        //mute sound
+        if(container.getInput().isKeyPressed(Input.KEY_S)){
+            toggleSound();
+        }
+
+        //set fullscreen mode
+        if(container.getInput().isKeyPressed(Input.KEY_F)){
+            try{
+                toggleFullscreen();
+            } catch (SlickException e) {
+                e.printStackTrace();
+            }
+        }
+
+        menu.update();
+
+        if(!paused && !menu.isVisible()){
+            //update all objects that are currently part of gameObjects
+            Set<GameObject> tempGameObjects = new HashSet<GameObject>(gameObjects);
+            for(GameObject gameObject : tempGameObjects){
+                gameObject.update(delta);
+            }
         }
 
         cleanupDestroyedObjects();
@@ -115,6 +163,7 @@ public class GameContext {
         if(player.isDead()){
             fog.draw(0, 0, new Color(1, 1, 1, 0.5f));
         }
+        menu.draw();
 
     }
 
@@ -258,7 +307,7 @@ public class GameContext {
                     }
                 }
                 if("enemy".equals(tileAttributes.get("objectStart"))){
-                    this.add(new Enemy(xAxis, yAxis, Movement.FOLLOW));
+                    //this.add(new Enemy(xAxis, yAxis, Movement.FOLLOW));
                 }
             }
         }
@@ -276,6 +325,8 @@ public class GameContext {
         }else{
             add(highScore);
         }
+
+        this.menu = new Menu();
     }
 
     public void restart() throws SlickException {
@@ -306,6 +357,28 @@ public class GameContext {
         return isColliding;
     }
 
+    public void toggleSound(){
+        soundOn = !soundOn;
+        container.setSoundOn(soundOn);
+    }
+
+    public void toggleMusic(){
+        musicOn = !musicOn;
+        container.setMusicOn(musicOn);
+    }
+
+    public void toggleFullscreen()throws SlickException{
+        fullscreen = !fullscreen;
+        if(fullscreen){
+            ((AppGameContainer)container).setDisplayMode(1920, 1080, true);
+        }else{
+            ((AppGameContainer)container).setDisplayMode(480, 480, false);
+        }
+    }
+
+    public boolean isPaused(){
+        return paused;
+    }
     public int getTileWidth(){
         return map.getTileWidth();
     }
