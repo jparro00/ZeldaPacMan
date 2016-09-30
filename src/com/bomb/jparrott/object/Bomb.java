@@ -3,6 +3,7 @@ package com.bomb.jparrott.object;
 import com.bomb.jparrott.animation.Animatable;
 import com.bomb.jparrott.animation.AnimationFactory;
 import com.bomb.jparrott.game.GameContext;
+import com.bomb.jparrott.game.SoundManager;
 import org.newdawn.slick.*;
 import org.newdawn.slick.openal.Audio;
 import org.newdawn.slick.openal.AudioLoader;
@@ -62,14 +63,7 @@ public class Bomb extends GameObject implements Animatable{
      */
     private void explode(){
 
-        try{
-            SoundStore soundStore = SoundStore.get();
-            Audio sound = soundStore.getWAV("data/sounds/bomb_explode.wav");
-
-            sound.playAsSoundEffect(1.0f, 1.0f, false);
-        }catch (IOException io){
-            io.printStackTrace();
-        }
+        SoundManager.play("bomb_explode");
 
 
         exploding = true;

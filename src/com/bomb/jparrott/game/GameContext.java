@@ -11,8 +11,8 @@ import com.bomb.jparrott.object.Destroyable;
 import com.bomb.jparrott.object.Enemy;
 import com.bomb.jparrott.object.GameObject;
 import com.bomb.jparrott.object.Hazard;
-import com.bomb.jparrott.object.HeartContainer;
 import com.bomb.jparrott.object.HighScore;
+import com.bomb.jparrott.object.LifeMeter;
 import com.bomb.jparrott.object.Movable;
 import com.bomb.jparrott.object.Movement;
 import com.bomb.jparrott.object.Player;
@@ -64,6 +64,7 @@ public class GameContext {
     private GameInput gameInput;
     private BlinkingFont blinkingFont;
     private boolean levelStart;
+    private LifeMeter lifeMeter;
 
     private Menu menu;
 
@@ -82,6 +83,7 @@ public class GameContext {
         this.musicOn = true;
         this.soundOn = true;
         this.gameInput = GameInput.getInstance();
+        SoundManager.init();
 
         initMap(map);
         this.blinkingFont = new BlinkingFont("data/Triforce.ttf", 500);
@@ -100,7 +102,7 @@ public class GameContext {
         return instance;
     }
 
-    public void update(int delta){
+    public void update(int delta) throws SlickException{
 
         blinkingFont.update(delta);
         GameInput gameInput = GameInput.getInstance();
@@ -310,10 +312,7 @@ public class GameContext {
             }
         }
 
-        //add the heart containers for each of player lives
-        for(int i = 0; i < player.getLives(); i++){
-            add(new HeartContainer(i, 0));
-        }
+        add(new LifeMeter());
 
         add(new ScoreContainer());
 

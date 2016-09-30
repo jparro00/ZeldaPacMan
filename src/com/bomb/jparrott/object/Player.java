@@ -2,6 +2,7 @@ package com.bomb.jparrott.object;
 
 import com.bomb.jparrott.animation.AnimationFactory;
 import com.bomb.jparrott.game.GameInput;
+import com.bomb.jparrott.game.SoundManager;
 import com.bomb.jparrott.map.GameMap;
 import com.bomb.jparrott.map.Tile;
 import org.dyn4j.geometry.AABB;
@@ -85,6 +86,7 @@ public class Player extends Character{
                 bomb = new Bomb(x, y);
                 gameContext.add(bomb);
                 bombCount--;
+                SoundManager.play("drop_bomb");
             }catch (SlickException se){
                 System.out.println("Caught exception while trying to create Bomb");
                 se.printStackTrace();
@@ -95,12 +97,7 @@ public class Player extends Character{
     public void die(){
         if(!dead){
             dead = true;
-            try {
-                Audio sound = AudioLoader.getAudio("WAV", ResourceLoader.getResourceAsStream("data/sounds/die.wav"));
-                sound.playAsSoundEffect(1.0f, 1.0f, false);
-            } catch (IOException io) {
-                io.printStackTrace();
-            }
+            SoundManager.play("die");
 
             setRenderableLayer(0);
             currentAnimation = animationMap.get(AnimationFactory.DEAD);
@@ -115,6 +112,7 @@ public class Player extends Character{
     }
 
     public void collect(PowerUp powerUp){
+        int previousScore = score;
         if(powerUp instanceof BombPowerUp){
             bombCount++;
             addScore(50);
@@ -123,6 +121,14 @@ public class Player extends Character{
             coinCount++;
             addScore(10);
         }
+
+        //gain lives for points earned
+        if(score > previousScore &&
+                (score == 5000 ||
+                score % 20000 == 0)){
+            addLife();
+        }
+
         powerUp.setDestroyed(true);
     }
 
@@ -403,6 +409,12 @@ public class Player extends Character{
     }
     public int getLives() {
         return lives;
+    }
+    public void addLife(){
+
+        SoundManager.play(("gain_life"));
+
+        lives++;
     }
     public void setLives(Integer lives) {
         this.lives = lives;
