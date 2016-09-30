@@ -2,6 +2,7 @@ package com.bomb.jparrott.object;
 
 import com.bomb.jparrott.animation.AnimationFactory;
 import com.bomb.jparrott.game.GameInput;
+import com.bomb.jparrott.game.SoundManager;
 import com.bomb.jparrott.map.GameMap;
 import com.bomb.jparrott.map.Tile;
 import org.dyn4j.geometry.AABB;
@@ -23,6 +24,7 @@ public class Player extends Character{
     public final static int DEFAULT_RENDERABLE_LAYER = 2;
     public final static int DEFAULT_BOMB_COUNT = 0;
     public final static int DEFAULT_LIVES_COUNT = 3;
+    public final static int LIFE_GAIN_THRESHOLD = 20000;
 
     private int bombCount;
     private int coinCount;
@@ -85,6 +87,7 @@ public class Player extends Character{
                 bomb = new Bomb(x, y);
                 gameContext.add(bomb);
                 bombCount--;
+                SoundManager.play("drop_bomb");
             }catch (SlickException se){
                 System.out.println("Caught exception while trying to create Bomb");
                 se.printStackTrace();
@@ -95,12 +98,7 @@ public class Player extends Character{
     public void die(){
         if(!dead){
             dead = true;
-            try {
-                Audio sound = AudioLoader.getAudio("WAV", ResourceLoader.getResourceAsStream("data/sounds/die.wav"));
-                sound.playAsSoundEffect(1.0f, 1.0f, false);
-            } catch (IOException io) {
-                io.printStackTrace();
-            }
+            SoundManager.play("die");
 
             setRenderableLayer(0);
             currentAnimation = animationMap.get(AnimationFactory.DEAD);
@@ -115,6 +113,7 @@ public class Player extends Character{
     }
 
     public void collect(PowerUp powerUp){
+
         if(powerUp instanceof BombPowerUp){
             bombCount++;
             addScore(50);
@@ -123,6 +122,7 @@ public class Player extends Character{
             coinCount++;
             addScore(10);
         }
+
         powerUp.setDestroyed(true);
     }
 
@@ -392,8 +392,19 @@ public class Player extends Character{
     public int getScore(){
         return score;
     }
-    public void addScore(int score){
-        this.score += score;
+    public void addScore(int points){
+        int previousScore = score;
+        score += points;
+
+        //gain life for getting over 5000
+        if(previousScore < 5000 && score >= 5000){
+            addLife();
+        }
+
+        int livesGained = ((int)score/LIFE_GAIN_THRESHOLD) - ((int)previousScore/LIFE_GAIN_THRESHOLD);
+        for(; livesGained > 0; livesGained--){
+            addLife();
+        }
     }
     public int getBombCount() {
         return bombCount;
@@ -403,6 +414,12 @@ public class Player extends Character{
     }
     public int getLives() {
         return lives;
+    }
+    public void addLife(){
+
+        SoundManager.play(("gain_life"));
+
+        lives++;
     }
     public void setLives(Integer lives) {
         this.lives = lives;

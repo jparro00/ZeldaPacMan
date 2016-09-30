@@ -1,5 +1,6 @@
 package com.bomb.jparrott.game;
 
+import com.bomb.jparrott.gui.BlinkingFont;
 import com.bomb.jparrott.gui.Menu;
 import com.bomb.jparrott.map.GameMap;
 import com.bomb.jparrott.map.Tile;
@@ -10,8 +11,8 @@ import com.bomb.jparrott.object.Destroyable;
 import com.bomb.jparrott.object.Enemy;
 import com.bomb.jparrott.object.GameObject;
 import com.bomb.jparrott.object.Hazard;
-import com.bomb.jparrott.object.HeartContainer;
 import com.bomb.jparrott.object.HighScore;
+import com.bomb.jparrott.object.LifeMeter;
 import com.bomb.jparrott.object.Movable;
 import com.bomb.jparrott.object.Movement;
 import com.bomb.jparrott.object.Player;
@@ -61,6 +62,9 @@ public class GameContext {
     private boolean fullscreen;
     private boolean paused;
     private GameInput gameInput;
+    private BlinkingFont blinkingFont;
+    private boolean levelStart;
+    private LifeMeter lifeMeter;
 
     private Menu menu;
 
@@ -79,8 +83,10 @@ public class GameContext {
         this.musicOn = true;
         this.soundOn = true;
         this.gameInput = GameInput.getInstance();
+        SoundManager.init();
 
         initMap(map);
+        this.blinkingFont = new BlinkingFont("data/Triforce.ttf", 500);
     }
 
     public static GameContext getInstance() {
@@ -96,8 +102,9 @@ public class GameContext {
         return instance;
     }
 
-    public void update(int delta){
+    public void update(int delta) throws SlickException{
 
+        blinkingFont.update(delta);
         GameInput gameInput = GameInput.getInstance();
 
         if(gameInput.isPressed(GameInput.Button.LB) || gameInput.isPressed(GameInput.Button.RB)){
@@ -105,21 +112,30 @@ public class GameContext {
         }
 
         menu.update();
+        if(levelStart){
+            if(gameInput.isPressed(GameInput.Button.START) || gameInput.isPressed(GameInput.Button.SELECT)){
+                levelStart = false;
+            }
+        }else{
+            //pause
+            if(gameInput.isPressed(GameInput.Button.START)){
+                paused = !paused;
+            }
 
-        //only update game objects if the game is not paused and menu is not toggled
-        if(!container.isPaused() && !menu.isVisible()){
-            //update all objects that are currently part of gameObjects
-            Set<GameObject> tempGameObjects = new HashSet<GameObject>(gameObjects);
-            for(GameObject gameObject : tempGameObjects){
-                gameObject.update(delta);
+            //only update game objects if the game is not paused and menu is not toggled
+            if(!paused && !menu.isVisible() && container.hasFocus()){
+                //update all objects that are currently part of gameObjects
+                Set<GameObject> tempGameObjects = new HashSet<GameObject>(gameObjects);
+                for(GameObject gameObject : tempGameObjects){
+                    gameObject.update(delta);
+                }
             }
         }
-
         cleanupDestroyedObjects();
-
     }
 
     public void render(){
+
         map.renderLowerLayer();
 
         Renderable[] renderables = new Renderable[] {};
@@ -131,11 +147,23 @@ public class GameContext {
 
         map.renderUpperLayer();
 
-        //draw fog over screen if player is dead
+        //draw player dead
         if(player.isDead()){
             fog.draw(0, 0, new Color(1, 1, 1, 0.5f));
+            blinkingFont.drawCentered("PRESS ESC TO CONTINUE");
+        }
+        //draw paused
+        if(paused){
+            fog.draw(0, 0, new Color(1, 1, 1, 0.5f));
+            blinkingFont.drawCentered("PAUSE");
+        }
+        //draw level start
+        if(levelStart){
+            fog.draw(0, 0, new Color(1, 1, 1, 0.5f));
+            blinkingFont.drawCentered("PRESS ESC TO START");
         }
         menu.draw();
+
 
     }
 
@@ -284,10 +312,7 @@ public class GameContext {
             }
         }
 
-        //add the heart containers for each of player lives
-        for(int i = 0; i < player.getLives(); i++){
-            add(new HeartContainer(i, 0));
-        }
+        add(new LifeMeter());
 
         add(new ScoreContainer());
 
@@ -299,6 +324,11 @@ public class GameContext {
         }
 
         this.menu = new Menu();
+    }
+
+    public void nextLevel(GameMap map)throws SlickException{
+        this.levelStart = true;
+        initMap(map);
     }
 
     public void restart() throws SlickException {
