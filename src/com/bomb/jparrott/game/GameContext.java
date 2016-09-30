@@ -1,5 +1,6 @@
 package com.bomb.jparrott.game;
 
+import com.bomb.jparrott.gui.BlinkingFont;
 import com.bomb.jparrott.gui.Menu;
 import com.bomb.jparrott.map.GameMap;
 import com.bomb.jparrott.map.Tile;
@@ -61,6 +62,8 @@ public class GameContext {
     private boolean fullscreen;
     private boolean paused;
     private GameInput gameInput;
+    private BlinkingFont blinkingFont;
+    private boolean levelStart;
 
     private Menu menu;
 
@@ -81,6 +84,7 @@ public class GameContext {
         this.gameInput = GameInput.getInstance();
 
         initMap(map);
+        this.blinkingFont = new BlinkingFont("data/Triforce.ttf", 500);
     }
 
     public static GameContext getInstance() {
@@ -98,6 +102,7 @@ public class GameContext {
 
     public void update(int delta){
 
+        blinkingFont.update(delta);
         GameInput gameInput = GameInput.getInstance();
 
         if(gameInput.isPressed(GameInput.Button.LB) || gameInput.isPressed(GameInput.Button.RB)){
@@ -105,21 +110,30 @@ public class GameContext {
         }
 
         menu.update();
+        if(levelStart){
+            if(gameInput.isPressed(GameInput.Button.START) || gameInput.isPressed(GameInput.Button.SELECT)){
+                levelStart = false;
+            }
+        }else{
+            //pause
+            if(gameInput.isPressed(GameInput.Button.START)){
+                paused = !paused;
+            }
 
-        //only update game objects if the game is not paused and menu is not toggled
-        if(!container.isPaused() && !menu.isVisible()){
-            //update all objects that are currently part of gameObjects
-            Set<GameObject> tempGameObjects = new HashSet<GameObject>(gameObjects);
-            for(GameObject gameObject : tempGameObjects){
-                gameObject.update(delta);
+            //only update game objects if the game is not paused and menu is not toggled
+            if(!paused && !menu.isVisible() && container.hasFocus()){
+                //update all objects that are currently part of gameObjects
+                Set<GameObject> tempGameObjects = new HashSet<GameObject>(gameObjects);
+                for(GameObject gameObject : tempGameObjects){
+                    gameObject.update(delta);
+                }
             }
         }
-
         cleanupDestroyedObjects();
-
     }
 
     public void render(){
+
         map.renderLowerLayer();
 
         Renderable[] renderables = new Renderable[] {};
@@ -131,11 +145,23 @@ public class GameContext {
 
         map.renderUpperLayer();
 
-        //draw fog over screen if player is dead
+        //draw player dead
         if(player.isDead()){
             fog.draw(0, 0, new Color(1, 1, 1, 0.5f));
+            blinkingFont.drawCentered("PRESS ESC TO CONTINUE");
+        }
+        //draw paused
+        if(paused){
+            fog.draw(0, 0, new Color(1, 1, 1, 0.5f));
+            blinkingFont.drawCentered("PAUSE");
+        }
+        //draw level start
+        if(levelStart){
+            fog.draw(0, 0, new Color(1, 1, 1, 0.5f));
+            blinkingFont.drawCentered("PRESS ESC TO START");
         }
         menu.draw();
+
 
     }
 
@@ -299,6 +325,11 @@ public class GameContext {
         }
 
         this.menu = new Menu();
+    }
+
+    public void nextLevel(GameMap map)throws SlickException{
+        this.levelStart = true;
+        initMap(map);
     }
 
     public void restart() throws SlickException {

@@ -139,11 +139,6 @@ public class ZeldaPacMan extends BasicGame
     @Override
     public void update(GameContainer container, int delta) throws SlickException {
 
-        //pause game if it doesn't have focus
-        if(!paused){
-            container.setPaused(!container.hasFocus());
-        }
-
         //debug restart game if out of lives
         Player player = gameContext.getPlayer();
         int playerLives = player.getLives();
@@ -169,7 +164,7 @@ public class ZeldaPacMan extends BasicGame
             }
             if(mapIterator.hasNext()) {
                 currentMap = mapIterator.next();
-                gameContext.initMap(currentMap);
+                gameContext.nextLevel(currentMap);
                 return;
             }
             else{
@@ -190,11 +185,6 @@ public class ZeldaPacMan extends BasicGame
             }
         }
 
-        //pause
-        if(gameInput.isPressed(GameInput.Button.START)){
-            paused = !paused;
-            container.setPaused(paused);
-        }
 
         //mute music
         if(container.getInput().isKeyPressed(Input.KEY_M)){
@@ -218,14 +208,11 @@ public class ZeldaPacMan extends BasicGame
             }
         }
 
-        if(!paused){
-            gameContext.update(delta);
-        }
+        gameContext.update(delta);
     }
 
     @Override
     public void render(GameContainer container, Graphics g) throws SlickException{
-
         gameContext.render();
     }
 
