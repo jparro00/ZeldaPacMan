@@ -10,7 +10,9 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.util.pathfinding.Mover;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by jparrott on 11/11/2015.
@@ -147,15 +149,44 @@ public abstract class Character extends GameObject implements Mover, Movable, An
             }
 
 
-            //TODO: add check for if your current tile is the tile blocking you
-            if(!isBlocked(newX, newY) || isBlocked(x, y)){
-                setX(newX);
-                setY(newY);
+            /*
+             * this is messy code that fixes a bug with enemies moving off the screen.  eventually everything with
+             * movement methods amont Character, Enemy and Player need to be rearchitected, but this will do for now
+             */
+
+            if(this instanceof Player){
+                if(!isBlocked(newX, newY) || isBlocked(x, y)){
+                    setX(newX);
+                    setY(newY);
+                }
+            }else{
+                Set<Blockable> blockables = getCollidingBlockables(this, getTestAABB(x, y));
+                Set<Blockable> newBlockables = getCollidingBlockables(this, getTestAABB(newX, newY));
+                System.out.println("blockables: " + blockables);
+                System.out.println("newBlockables: " + newBlockables);
+                if(newBlockables.isEmpty() || blockables.containsAll(newBlockables)){
+                    setX(newX);
+                    setY(newY);
+                }
             }
         }
 
         currentAnimation.update(delta);
 
+    }
+
+    public Set<Blockable> getCollidingBlockables(Movable movable, AABB aabb){
+        Set<Blockable> returnBlockables = new HashSet<>();
+        for(Blockable blockable : gameContext.getBlockables()){
+            if(blockable.isImmaterial()){
+                continue;
+            }
+            AABB blockableAABB = blockable.getAABB();
+            if(aabb.overlaps(blockableAABB) && movable != blockable){
+                returnBlockables.add(blockable);
+            }
+        }
+        return returnBlockables;
     }
 
     @Override

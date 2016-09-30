@@ -345,17 +345,9 @@ public class Enemy extends Character implements Hazard, Blockable {
     public boolean isBlocked(float x, float y) {
         boolean isBlocked = false;
 
-        //check if character has moved off screnn
-        int mapWidth = gameContext.getMap().getWidthInPixels();
-        int mapHeight = gameContext.getMap().getHeightInPixels();
-        if(x >= mapWidth || x < 0 || y >= mapHeight || y < 0){
-            isBlocked = true;
-        }
         //else check if colliding with any blockables
-        else{
-            AABB newAABB = getTestAABB(x, y);
-            isBlocked = gameContext.isCollidingWithBlockables(this, newAABB);
-        }
+        AABB newAABB = getTestAABB(x, y);
+        isBlocked = getCollidingBlockables(this, newAABB).isEmpty();
 
         return isBlocked;
     }

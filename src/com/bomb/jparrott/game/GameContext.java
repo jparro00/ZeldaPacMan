@@ -344,20 +344,6 @@ public class GameContext {
         addAll(remainingPowerUps);
     }
 
-    public boolean isCollidingWithBlockables(Movable movable, AABB aabb){
-        boolean isColliding = false;
-        for(Blockable blockable : blockables){
-            if(blockable.isImmaterial()){
-                continue;
-            }
-            AABB blockableAABB = blockable.getAABB();
-            if(aabb.overlaps(blockableAABB) && movable != blockable){
-                isColliding = true;
-                break;
-            }
-        }
-        return isColliding;
-    }
 
     public void toggleSound(){
         soundOn = !soundOn;
