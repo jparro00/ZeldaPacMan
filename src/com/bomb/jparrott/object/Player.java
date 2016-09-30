@@ -24,6 +24,7 @@ public class Player extends Character{
     public final static int DEFAULT_RENDERABLE_LAYER = 2;
     public final static int DEFAULT_BOMB_COUNT = 0;
     public final static int DEFAULT_LIVES_COUNT = 3;
+    public final static int LIFE_GAIN_THRESHOLD = 20000;
 
     private int bombCount;
     private int coinCount;
@@ -112,7 +113,7 @@ public class Player extends Character{
     }
 
     public void collect(PowerUp powerUp){
-        int previousScore = score;
+
         if(powerUp instanceof BombPowerUp){
             bombCount++;
             addScore(50);
@@ -120,13 +121,6 @@ public class Player extends Character{
         if(powerUp instanceof CoinPowerUp){
             coinCount++;
             addScore(10);
-        }
-
-        //gain lives for points earned
-        if(score > previousScore &&
-                (score == 5000 ||
-                score % 20000 == 0)){
-            addLife();
         }
 
         powerUp.setDestroyed(true);
@@ -398,8 +392,19 @@ public class Player extends Character{
     public int getScore(){
         return score;
     }
-    public void addScore(int score){
-        this.score += score;
+    public void addScore(int points){
+        int previousScore = score;
+        score += points;
+
+        //gain life for getting over 5000
+        if(previousScore < 5000 && score >= 5000){
+            addLife();
+        }
+
+        int livesGained = ((int)score/LIFE_GAIN_THRESHOLD) - ((int)previousScore/LIFE_GAIN_THRESHOLD);
+        for(; livesGained > 0; livesGained--){
+            addLife();
+        }
     }
     public int getBombCount() {
         return bombCount;
