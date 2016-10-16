@@ -42,7 +42,7 @@ public class Menu implements Renderable{
         this.unitWidth = GameContext.getInstance().getMap().getTileWidth();
         this.x = unitWidth * 3;
         this.y = unitHeight * 4;
-        this.width = unitWidth * 9;
+        this.width = unitWidth * 14;
         this.height = unitHeight * 7;
         this.rectangle = new Rectangle(x, y, width, height);
         this.graphics = new Graphics();

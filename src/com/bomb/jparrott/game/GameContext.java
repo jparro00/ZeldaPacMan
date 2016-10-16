@@ -29,6 +29,8 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.util.Log;
+import org.newdawn.slick.util.LogSystem;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -67,7 +69,6 @@ public class GameContext {
     private LifeMeter lifeMeter;
 
     private Menu menu;
-
     private GameContext(GameContainer container, GameMap map) throws SlickException{
 
         this.log = LogManager.getLogger(this.getClass());

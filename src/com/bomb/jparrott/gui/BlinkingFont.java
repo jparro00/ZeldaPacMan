@@ -36,8 +36,8 @@ public class BlinkingFont {
             throw sl;
         }
         this.blinkTime = blinkTime;
-        screenWidth = GameContext.getInstance().getMap().getHeightInPixels();
-        screenHeight = GameContext.getInstance().getMap().getWidthInPixels();
+        screenWidth = GameContext.getInstance().getMap().getWidthInPixels();
+        screenHeight = GameContext.getInstance().getMap().getHeightInPixels();
 
     }
 

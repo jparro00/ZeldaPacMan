@@ -26,7 +26,7 @@ public class HighScore extends GameObject implements Serializable{
 
     private HighScore() {
         super(0, 0, 32, 32);
-        this.setXBlock(6);
+        this.setXBlock(9);
         this.setYBlock(0);
         setRenderableLayer(DEFAULT_RENDERABLE_LAYER);
     }

@@ -162,8 +162,6 @@ public abstract class Character extends GameObject implements Mover, Movable, An
             }else{
                 Set<Blockable> blockables = getCollidingBlockables(this, getTestAABB(x, y));
                 Set<Blockable> newBlockables = getCollidingBlockables(this, getTestAABB(newX, newY));
-                System.out.println("blockables: " + blockables);
-                System.out.println("newBlockables: " + newBlockables);
                 if(newBlockables.isEmpty() || blockables.containsAll(newBlockables)){
                     setX(newX);
                     setY(newY);

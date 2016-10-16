@@ -8,8 +8,8 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="com.bomb.jparrott" level="warn"/>
-        <Root level="warn">
+        <Logger name="com.bomb.jparrott" level="error"/>
+        <Root level="error">
             <AppenderRef ref="STDOUT"/>
         </Root>
     </Loggers>

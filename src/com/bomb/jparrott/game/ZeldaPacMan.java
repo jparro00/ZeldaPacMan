@@ -18,6 +18,7 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.Music;
 import org.newdawn.slick.ScalableGame;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.util.LogSystem;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -64,13 +65,14 @@ public class ZeldaPacMan extends BasicGame
     public static void main(String [] arguments){
         try{
             System.setProperty("java.library.path", "lib");
-            System.setProperty("org.lwjgl.librarypath", new File("lib/natives/natives-windows").getAbsolutePath());
+            //System.setProperty("org.lwjgl.librarypath", new File("lib/natives/natives-windows").getAbsolutePath());
             Music music = new Music("data/sounds/Overworld.ogg");
             music.loop();
+            org.newdawn.slick.util.Log.setLogSystem(new Log());
 
-            app = new AppGameContainer(
-                    new ScalableGame(new ZeldaPacMan(),480,480));
-            app.setDisplayMode(480, 480, false);
+            app = new AppGameContainer(new ScalableGame(new ZeldaPacMan(),640,480));
+            //app.setDisplayMode(640, 480, false);
+            app.setDisplayMode(1920, 1080, true);
             app.setShowFPS(false);
             app.setTargetFrameRate(60);
             app.start();
@@ -117,10 +119,11 @@ public class ZeldaPacMan extends BasicGame
     public void init(GameContainer container) throws SlickException{
         this.maps = new ArrayList<GameMap>();
 
-        this.maps.add(new GameMap("data/maps/Level_01.tmx"));
-        this.maps.add(new GameMap("data/maps/Level_02.tmx"));
-        this.maps.add(new GameMap("data/maps/Level_03.tmx"));
-        this.maps.add(new GameMap("data/maps/Level_04.tmx"));
+        this.maps.add(new GameMap("data/maps/wide_screen.tmx"));
+        //this.maps.add(new GameMap("data/maps/Level_01.tmx"));
+        //this.maps.add(new GameMap("data/maps/Level_02.tmx"));
+        //this.maps.add(new GameMap("data/maps/Level_03.tmx"));
+        //this.maps.add(new GameMap("data/maps/Level_04.tmx"));
 
         this.mapIterator = maps.iterator();
         this.currentMap = mapIterator.next();
@@ -214,6 +217,47 @@ public class ZeldaPacMan extends BasicGame
     @Override
     public void render(GameContainer container, Graphics g) throws SlickException{
         gameContext.render();
+    }
+
+    private static class Log implements LogSystem {
+        private Logger log = LogManager.getLogger();
+
+        public Log(){}
+
+        @Override
+        public void error(String s, Throwable throwable) {
+            log.error(s, throwable);
+        }
+
+        @Override
+        public void error(Throwable throwable) {
+            log.error(throwable);
+        }
+
+        @Override
+        public void error(String s) {
+            log.error(s);
+        }
+
+        @Override
+        public void warn(String s) {
+            log.warn(s);
+        }
+
+        @Override
+        public void warn(String s, Throwable throwable) {
+            log.warn(s, throwable);
+        }
+
+        @Override
+        public void info(String s) {
+            log.info(s);
+        }
+
+        @Override
+        public void debug(String s) {
+            log.debug(s);
+        }
     }
 
 }

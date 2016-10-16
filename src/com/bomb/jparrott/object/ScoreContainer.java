@@ -18,7 +18,7 @@ public class ScoreContainer extends GameObject{
 
     public ScoreContainer() {
         super(0, 0, 32, 32);
-        this.setXBlock(12);
+        this.setXBlock(17);
         this.setYBlock(0);
         setRenderableLayer(DEFAULT_RENDERABLE_LAYER);
     }

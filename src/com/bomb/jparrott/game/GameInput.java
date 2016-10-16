@@ -57,6 +57,7 @@ public class GameInput implements Serializable{
         this.keyMap = new OneToManyBidiMap<>();
         keyMap.put(Input.KEY_ENTER,Button.A);
         keyMap.put(Input.KEY_B, Button.B);
+        keyMap.put(Input.KEY_SPACE, Button.B);
         keyMap.put(Input.KEY_X, Button.X);
         keyMap.put(Input.KEY_Y, Button.Y);
         keyMap.put(Input.KEY_P, Button.START);
@@ -73,6 +74,10 @@ public class GameInput implements Serializable{
         keyMap.put(Input.KEY_RIGHT, Button.RIGHT);
         keyMap.put(Input.KEY_L, Button.RIGHT);
 
+        keyMap.put(Input.KEY_W, Button.UP);
+        keyMap.put(Input.KEY_S, Button.DOWN);
+        keyMap.put(Input.KEY_A, Button.LEFT);
+        keyMap.put(Input.KEY_D, Button.RIGHT);
         initTransientVariables();
     }
 
@@ -115,8 +120,8 @@ public class GameInput implements Serializable{
             }
         }
 
-        /*
         //controller
+        /*
         if(!isDown){
             try{
                 switch (button) {
