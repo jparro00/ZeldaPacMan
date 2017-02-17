@@ -7,9 +7,6 @@ import com.bomb.jparrott.object.Player;
 import com.bomb.jparrott.object.PowerUp;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.lwjgl.LWJGLException;
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.GameContainer;
@@ -65,7 +62,7 @@ public class ZeldaPacMan extends BasicGame
     public static void main(String [] arguments){
         try{
             System.setProperty("java.library.path", "lib");
-            //System.setProperty("org.lwjgl.librarypath", new File("lib/natives/natives-windows").getAbsolutePath());
+            System.setProperty("org.lwjgl.librarypath", new File("lib/natives/natives-linux").getAbsolutePath());
             Music music = new Music("data/sounds/Overworld.ogg");
             music.loop();
             org.newdawn.slick.util.Log.setLogSystem(new Log());
@@ -136,6 +133,9 @@ public class ZeldaPacMan extends BasicGame
 
         List gameObjects = new ArrayList();
         gameContext.addAll(gameObjects);
+
+        //for some reason fullscreen is only working in Ubuntu if we fullscreen after loading
+        app.setDisplayMode(1920, 1080, true);
 
     }
 

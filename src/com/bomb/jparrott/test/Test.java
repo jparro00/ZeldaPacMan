@@ -2,10 +2,7 @@ package com.bomb.jparrott.test;
 
 import java.io.IOException;
 
-import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.openal.AL;
 import org.newdawn.slick.Input;
