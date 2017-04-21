@@ -16,7 +16,7 @@ import org.newdawn.slick.tests.InputTest;
 import org.newdawn.slick.util.ResourceLoader;
 
 public class Test{
-
+//adding a test comment
     public static void main(String[] args){
         InputTest inputTest = new InputTest();
         inputTest.main(new String[] {});
